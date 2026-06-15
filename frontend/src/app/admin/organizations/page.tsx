@@ -128,7 +128,7 @@ export default function AdminOrganizationsPage() {
       <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Projects showcase</p>
-          <h2 className="mt-1 font-display text-4xl font-semibold">Latest Certified Organizations</h2>
+          <h2 className="mt-1 font-display text-3xl font-semibold">Latest Certified Organizations</h2>
         </div>
         <div className="relative w-full lg:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-graphite/50" size={18} />
@@ -144,7 +144,7 @@ export default function AdminOrganizationsPage() {
       {message ? <div className="mb-4 rounded border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">{message}</div> : null}
       {error ? <div className="mb-4 rounded border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
         <AdminCard>
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-xl font-semibold">{editing ? "Update Organization" : "Create Organization"}</h3>
@@ -180,53 +180,42 @@ export default function AdminOrganizationsPage() {
           {loading ? (
             <div className="grid min-h-72 place-items-center text-sm font-semibold text-graphite/60">Loading organizations...</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[980px] border-separate border-spacing-y-3 text-left">
-                <thead>
-                  <tr className="text-xs uppercase tracking-[0.14em] text-graphite/50">
-                    <th className="px-3 py-2">Image Previews</th>
-                    <th className="px-3 py-2">Title</th>
-                    <th className="px-3 py-2">Description</th>
-                    <th className="px-3 py-2">Certification Date</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Created Date</th>
-                    <th className="px-3 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredItems.map((item) => (
-                    <tr key={item._id} className="rounded bg-mint align-top">
-                      <td className="rounded-l px-3 py-3">
-                        <div className="flex gap-2">
-                          <img src={asset(item.imageUrl)} alt={`${item.title} image 1`} className="h-20 w-24 rounded object-cover" />
-                          {item.imageUrl2 ? (
-                            <img src={asset(item.imageUrl2)} alt={`${item.title} image 2`} className="h-20 w-24 rounded object-cover" />
-                          ) : null}
+            <div className="grid gap-3">
+              {filteredItems.map((item) => (
+                <article key={item._id} className="rounded-2xl bg-[#f6f9fc] p-3">
+                  <div className="grid gap-4 lg:grid-cols-[180px_minmax(0,1fr)_auto]">
+                    <div className="grid grid-cols-2 gap-2">
+                      <img src={asset(item.imageUrl)} alt={`${item.title} image 1`} className="h-24 w-full rounded-xl object-cover" />
+                      {item.imageUrl2 ? (
+                        <img src={asset(item.imageUrl2)} alt={`${item.title} image 2`} className="h-24 w-full rounded-xl object-cover" />
+                      ) : (
+                        <div className="grid h-24 place-items-center rounded-xl border border-dashed border-slate-300 text-xs font-semibold text-slate-400">
+                          Image 2
                         </div>
-                      </td>
-                      <td className="px-3 py-3 font-bold">{item.title}</td>
-                      <td className="max-w-sm px-3 py-3 text-sm leading-6 text-graphite/70">{item.description}</td>
-                      <td className="px-3 py-3 text-sm font-semibold">{new Date(item.certificationDate).toLocaleDateString()}</td>
-                      <td className="px-3 py-3">
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="break-words text-base font-extrabold text-[#071b3f]">{item.title}</h3>
                         <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-moss">{item.status}</span>
-                      </td>
-                      <td className="px-3 py-3 text-sm text-graphite/70">
-                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}
-                      </td>
-                      <td className="rounded-r px-3 py-3">
-                        <div className="flex gap-2">
-                          <button onClick={() => edit(item)} className="grid h-10 w-10 place-items-center rounded bg-white" aria-label="Edit">
-                            <Pencil size={16} />
-                          </button>
-                          <button onClick={() => remove(item._id)} className="grid h-10 w-10 place-items-center rounded bg-white text-red-600" aria-label="Delete">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-graphite/70">{item.description}</p>
+                      <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-graphite/60">
+                        <span>Certified: {new Date(item.certificationDate).toLocaleDateString()}</span>
+                        <span>Created: {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 lg:flex-col">
+                      <button onClick={() => edit(item)} className="grid h-10 w-10 place-items-center rounded bg-white" aria-label="Edit">
+                        <Pencil size={16} />
+                      </button>
+                      <button onClick={() => remove(item._id)} className="grid h-10 w-10 place-items-center rounded bg-white text-red-600" aria-label="Delete">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
               {!filteredItems.length ? (
                 <div className="grid min-h-40 place-items-center text-sm font-semibold text-graphite/60">No organizations found.</div>
               ) : null}

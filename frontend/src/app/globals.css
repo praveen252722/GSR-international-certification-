@@ -83,10 +83,6 @@ a {
   border-color: rgba(214, 168, 66, 0.34);
 }
 
-.section-reveal {
-  animation: section-fade-up 700ms ease both;
-}
-
 .process-line {
   background: linear-gradient(90deg, transparent, rgba(214, 168, 66, 0.7), transparent);
 }
@@ -98,37 +94,62 @@ a {
 .hero-title {
   position: relative;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: hero-fade-up 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  color: #ffffff;
 }
 
 .hero-title::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -10% 0;
   background: linear-gradient(
     90deg,
-    transparent 10%,
-    transparent 25%,
-    rgba(212, 175, 55, 0.28) 40%,
-    rgba(255, 255, 255, 0.35) 48%,
-    rgba(212, 175, 55, 0.4) 55%,
-    rgba(255, 255, 255, 0.25) 62%,
-    transparent 75%,
-    transparent 90%
+    transparent 0%,
+    transparent 35%,
+    rgba(214, 168, 66, 0.16) 44%,
+    rgba(255, 245, 208, 0.32) 50%,
+    rgba(214, 168, 66, 0.18) 56%,
+    transparent 66%,
+    transparent 100%
   );
-  transform: translateX(-130%);
-  animation: title-shimmer 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s forwards;
+  transform: translateX(-140%);
+  animation: title-shimmer 5.2s ease-in-out infinite;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 
-.hero-subtitle {
-  animation: title-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+.section-reveal,
+.stagger-card {
+  animation: section-fade-up 720ms ease both;
 }
 
-.hero-cta {
-  animation: title-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+.stagger-card:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.stagger-card:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.stagger-card:nth-child(4) {
+  animation-delay: 270ms;
+}
+
+.stagger-card:nth-child(5) {
+  animation-delay: 360ms;
+}
+
+.stagger-card:nth-child(6) {
+  animation-delay: 450ms;
+}
+
+@supports (animation-timeline: view()) {
+  .section-reveal,
+  .stagger-card {
+    opacity: 0;
+    transform: translateY(18px);
+    animation-timeline: view();
+    animation-range: entry 12% cover 34%;
+  }
 }
 
 .brand-title {
@@ -152,31 +173,14 @@ a {
   }
 }
 
-@keyframes title-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes hero-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes title-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+  0%,
+  62% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(140%);
+  }
 }
 
 @keyframes ken-burns-zoom {

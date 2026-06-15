@@ -37,7 +37,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#e9f1fa] text-[#08172f]">
+    <div className="flex h-screen overflow-hidden bg-[#eef4fb] text-[#08172f]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -49,7 +49,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       {/* Mobile drawer sidebar */}
       <aside
         className={clsx(
-          "brand-surface fixed inset-y-0 left-0 z-50 flex w-72 flex-col p-5 text-white shadow-xl transition-transform duration-200 lg:hidden",
+          "brand-surface fixed inset-y-0 left-0 z-50 flex w-72 max-w-[86vw] flex-col p-5 text-white shadow-xl transition-transform duration-200 lg:hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -91,13 +91,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="brand-surface hidden w-72 shrink-0 flex-col p-5 text-white shadow-xl lg:flex">
+      <aside className="brand-surface hidden w-64 shrink-0 flex-col p-4 text-white shadow-xl lg:flex">
         <Link href="/admin" className="flex items-center gap-3">
           <span className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-white shadow-md">
             <img src="/gsr-logo.png" alt="GSR logo" className="h-12 w-12 object-contain" />
           </span>
           <span>
-            <span className="block font-sans text-xl font-extrabold tracking-tight">GSR Admin</span>
+            <span className="block font-sans text-lg font-extrabold tracking-tight">GSR Admin</span>
             <span className="text-xs uppercase tracking-[0.2em] text-white/70">Control room</span>
           </span>
         </Link>
@@ -110,7 +110,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 key={item.href}
                 href={item.href}
                 className={clsx(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-all",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all",
                   active
                     ? "bg-white/20 text-white shadow-sm"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -127,17 +127,17 @@ export function AdminShell({ children }: { children: ReactNode }) {
       {/* Main content area */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="brand-surface shadow-md">
-          <div className="flex min-h-20 items-center justify-between px-4 md:px-8">
+          <div className="flex min-h-16 items-center justify-between gap-3 px-4 md:px-6">
             <div className="flex items-center gap-4">
               <button onClick={() => setSidebarOpen(true)} className="p-2 text-white hover:text-white/80 lg:hidden" aria-label="Open menu">
                 <Menu size={22} />
               </button>
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">Admin panel</p>
-                <h1 className="font-sans text-2xl font-extrabold text-white">Certification Operations</h1>
+                <h1 className="font-sans text-xl font-extrabold text-white">Certification Operations</h1>
               </div>
             </div>
-            <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg bg-white/15 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/25">
+            <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/25">
               <LogOut size={16} /> Logout
             </button>
           </div>
@@ -149,7 +149,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

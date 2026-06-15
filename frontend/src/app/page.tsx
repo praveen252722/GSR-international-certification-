@@ -10,6 +10,7 @@ import {
   MapPin,
   Phone,
   QrCode,
+  Rocket,
   SearchCheck,
   ShieldCheck,
   Sparkles
@@ -46,13 +47,13 @@ export default async function HomePage() {
         <div className="blue-wave" />
           <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_620px]">
           <div>
-            <div className="hero-subtitle inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
               <Sparkles size={16} /> ISO certification services in Hyderabad
             </div>
             <h1 className="hero-title mt-5 max-w-3xl font-sans text-3xl font-extrabold leading-[1.12] text-white md:text-4xl lg:text-[46px]">
               GSR INTERNATIONAL CERTIFICATIONS
             </h1>
-            <p className="hero-subtitle mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 md:text-base">
+            <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 md:text-base">
               Global Standards | Integrity | Assurance. Professional ISO documentation, certification guidance, audit
               coordination, and verification support.
             </p>
@@ -71,7 +72,7 @@ export default async function HomePage() {
                 <span>Hyderabad, Telangana, India</span>
               </div>
             </div>
-            <div className="hero-cta mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/apply" className="rounded-full bg-[#d6a842] px-6 py-3 text-sm font-extrabold text-[#071b3f] shadow-soft transition hover:-translate-y-0.5 hover:bg-[#f0c766]">
                 Apply for Certification
               </Link>
@@ -148,7 +149,7 @@ export default async function HomePage() {
               ["500+", "Client engagements"],
               ["4", "Core workflow modules"]
             ].map(([value, label]) => (
-              <div key={label} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-soft">
+              <div key={label} className="stagger-card lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-soft">
                 <div className="font-sans text-4xl font-extrabold text-[#b8862b]">{value}</div>
                 <div className="mt-2 text-sm text-slate-600">{label}</div>
               </div>
@@ -167,7 +168,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-10 grid gap-7 md:grid-cols-3">
             {latestOrganizations.map((org) => (
-              <article key={org._id} className="lift-card overflow-hidden rounded-2xl border border-[#d6a842]/20 bg-white shadow-soft">
+              <article key={org._id} className="stagger-card lift-card overflow-hidden rounded-2xl border border-[#d6a842]/20 bg-white shadow-soft">
                 <ProjectImageSlider title={org.title} imageUrl={org.imageUrl} imageUrl2={org.imageUrl2} />
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between gap-4">
@@ -202,7 +203,7 @@ export default async function HomePage() {
           <SectionHeading eyebrow="Certifications" title="Standards managed through the admin workspace." />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {(featuredCertifications.length ? featuredCertifications : fallbackCertifications).map((item) => (
-              <div key={item._id || item.name} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-sm">
+              <div key={item._id || item.name} className="stagger-card lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-sm">
                 <BadgeCheck className="text-[#b8862b]" />
                 <h3 className="mt-5 text-xl font-semibold">{item.name}</h3>
                 <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">{item.description}</p>
@@ -227,7 +228,7 @@ export default async function HomePage() {
               { Icon: FileCheck2, title: "Clean documentation" },
               { Icon: Factory, title: "Industry-fit advice" }
             ].map(({ Icon, title }) => (
-              <div key={title} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6">
+              <div key={title} className="stagger-card lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6">
                 <Icon className="text-[#b8862b]" />
                 <h3 className="mt-5 font-semibold">{title}</h3>
               </div>
@@ -247,7 +248,7 @@ export default async function HomePage() {
               services.slice(5, 9),
               services.slice(9, 13)
             ].map((group, index) => (
-              <div key={index} className="lift-card rounded-2xl border border-slate-100 bg-white p-7 shadow-soft">
+              <div key={index} className="stagger-card lift-card rounded-2xl border border-slate-100 bg-white p-7 shadow-soft">
                 <div className={`mb-5 h-1 rounded-full ${index === 0 ? "bg-green-500" : index === 1 ? "bg-[#b8862b]" : "bg-cyan-500"}`} />
                 <div className="divide-y divide-slate-200">
                   {group.map((service) => (
@@ -260,7 +261,26 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-
+          <div className="section-reveal mt-8 overflow-hidden rounded-3xl border border-[#d6a842]/25 bg-[#071b3f] p-7 text-white shadow-[0_24px_70px_rgba(7,27,63,0.18)]">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#d6a842] text-[#071b3f]">
+                  <Rocket size={26} />
+                </span>
+                <div>
+                  <h3 className="text-2xl font-extrabold">AS 9100(D) Aerospace & Space Certification</h3>
+                  <p className="mt-3 max-w-3xl text-sm leading-7 text-white/75">
+                    AS9100(D) is the internationally recognized Quality Management System standard for aerospace,
+                    aviation, defense, and space organizations. It builds upon ISO 9001 while adding industry-specific
+                    requirements for safety, reliability, risk management, and product quality.
+                  </p>
+                </div>
+              </div>
+              <Link href="/contact?service=AS%209100(D)%20Aerospace%20%26%20Space%20Certification" className="shrink-0 rounded-full bg-[#d6a842] px-5 py-3 text-sm font-extrabold text-[#071b3f] transition hover:bg-[#f0c766]">
+                Talk to Experts
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
