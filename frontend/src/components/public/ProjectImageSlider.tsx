@@ -19,14 +19,19 @@ export function ProjectImageSlider({ title, imageUrl, imageUrl2 }: { title: stri
   return (
     <div className="relative h-56 w-full overflow-hidden bg-[#071b3f]">
       {images.map((image, index) => (
-        <img
+        <div
           key={image}
-          src={asset(image)}
-          alt={`${title} project image ${index + 1}`}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-            active === index ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 transition-all duration-900 ease-out ${
+            active === index ? "opacity-100 scale-100 shine-pulse" : "opacity-0 scale-[1.12]"
           }`}
-        />
+        >
+          <img
+            src={asset(image)}
+            alt={`${title} project image ${index + 1}`}
+            className="h-full w-full object-cover"
+          />
+          {active === index && images.length > 1 && <div className="shine-overlay" />}
+        </div>
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-[#071b3f]/35 to-transparent" />
       {images.length > 1 ? (

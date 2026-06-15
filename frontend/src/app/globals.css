@@ -96,15 +96,16 @@ a {
 }
 
 .hero-title {
-  animation: title-reveal 1s ease both;
+  animation: title-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both,
+             glow-pulse 2.2s ease 0.5s both;
 }
 
 .hero-subtitle {
-  animation: title-reveal 1s ease 0.3s both;
+  animation: title-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .hero-cta {
-  animation: title-reveal 1s ease 0.6s both;
+  animation: title-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
 }
 
 .brand-title {
@@ -131,12 +132,31 @@ a {
 @keyframes title-reveal {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(40px) scale(0.94);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+@keyframes glow-pulse {
+  0% { text-shadow: 0 0 0 transparent; }
+  30% { text-shadow: 0 0 50px rgba(214, 168, 66, 0.5), 0 0 100px rgba(214, 168, 66, 0.2), 0 0 150px rgba(214, 168, 66, 0.1); }
+  70% { text-shadow: 0 0 30px rgba(214, 168, 66, 0.25), 0 0 60px rgba(214, 168, 66, 0.1); }
+  100% { text-shadow: 0 0 12px rgba(214, 168, 66, 0.08); }
+}
+
+@keyframes shine-sweep {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(400%) skewX(-20deg); }
+}
+
+@keyframes shine-pulse {
+  0% { filter: brightness(1); }
+  20% { filter: brightness(1.25); }
+  40% { filter: brightness(1.1); }
+  100% { filter: brightness(1); }
 }
 
 @keyframes section-fade-up {
@@ -153,6 +173,35 @@ a {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.shine-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shine-pulse {
+  animation: shine-pulse 1.2s ease 0.1s both;
+}
+
+.shine-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 35%,
+    rgba(214, 168, 66, 0.3) 50%,
+    rgba(255, 255, 255, 0.45) 65%,
+    transparent 100%
+  );
+  animation: shine-sweep 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s forwards;
 }
 
 @media (max-width: 768px) {
