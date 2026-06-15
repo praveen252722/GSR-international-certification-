@@ -62,7 +62,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       throw new Error(`Request timed out (${REQUEST_TIMEOUT / 1000}s) - Backend not responding at ${url}`);
     }
     if (err instanceof TypeError && err.message === "Failed to fetch") {
-      throw new Error("Backend Offline - Cannot reach the API server at " + url + ". Make sure the backend is running on port 5000.");
+      const hint = url.includes("localhost") ? "Make sure the backend is running on port 5000." : "Check that the backend service is running.";
+      throw new Error("Backend Offline - Cannot reach the API server at " + url + ". " + hint);
     }
     throw err;
   } finally {
