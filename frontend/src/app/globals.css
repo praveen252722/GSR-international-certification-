@@ -100,7 +100,7 @@ a {
   overflow: hidden;
   opacity: 0;
   transform: translateY(30px);
-  animation: hero-fade-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hero-fade-up 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hero-title::after {
@@ -118,8 +118,8 @@ a {
     transparent 75%,
     transparent 90%
   );
-  transform: translateX(-100%);
-  animation: title-shimmer 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.08s forwards;
+  transform: translateX(-130%);
+  animation: title-shimmer 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s forwards;
   pointer-events: none;
 }
 
