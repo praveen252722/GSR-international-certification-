@@ -1,37 +1,68 @@
-import type { Certification, Inquiry, Organization, Settings } from "./types";
+import type { Certification, Inquiry, Organization, Settings, AdminUser } from "./types";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-export const ASSET_URL = API_URL.replace(/\/api\/?$/, "");
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+export const ASSET_URL = API_URL.replace(/\/api(\/v1)?\/?$/, "");
 
 const REQUEST_TIMEOUT = 15_000;
+
+function debugLog(level: string, ...args: unknown[]) {
+  if (process.env.NODE_ENV === "development") {
+    if (level === "error") console.error("[API]", ...args);
+    else console.log("[API]", ...args);
+  }
+}
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
+  const url = `${API_URL}${path}`;
+  const hasBody = options.body && !(options.body instanceof FormData);
+  const tokenHeader = (options.headers as Record<string, string> || {}).Authorization || "";
+  const reqHeaders: Record<string, string> = {
+    ...(hasBody ? { "Content-Type": "application/json" } : {}),
+    ...(options.headers as Record<string, string>)
+  };
+
+  debugLog("info", `${options.method || "GET"} ${url}`, tokenHeader ? `token:${tokenHeader.slice(0, 25)}...` : "no-token");
+
   try {
-    const response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(url, {
       ...options,
-      headers: {
-        ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
-        ...options.headers
-      },
+      headers: reqHeaders,
       cache: "no-store",
       signal: controller.signal
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: "Request failed" }));
-      throw new Error(error.message || "Request failed");
+      let errorBody: { message?: string } = {};
+      try { errorBody = await response.json(); } catch { /* ignore */ }
+      debugLog("error", `${response.status} ${url}`, errorBody.message || "");
+
+      if (response.status === 401 && typeof window !== "undefined" && !path.startsWith("/auth/")) {
+        localStorage.removeItem("adminToken");
+        window.location.href = "/admin/login";
+        throw new Error("Session expired. Redirecting to login...");
+      }
+
+      const statusLabels: Record<number, string> = {
+        401: "401 Unauthorized",
+        403: "403 Forbidden",
+        404: "404 Not Found",
+        500: "500 Internal Server Error"
+      };
+      const prefix = statusLabels[response.status] || `HTTP ${response.status}`;
+      const detail = errorBody.message || response.statusText;
+      throw new Error(`${prefix}: ${detail}`);
     }
 
     return response.json();
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error("Request timed out. Please check your connection and try again.");
+      throw new Error(`Request timed out (${REQUEST_TIMEOUT / 1000}s) - Backend not responding at ${url}`);
     }
     if (err instanceof TypeError && err.message === "Failed to fetch") {
-      throw new Error("Unable to connect to server. Please check your connection and try again.");
+      throw new Error("Backend Offline - Cannot reach the API server at " + url + ". Make sure the backend is running on port 5000.");
     }
     throw err;
   } finally {
@@ -48,7 +79,8 @@ export function authHeaders(): Record<string, string> {
 export const publicApi = {
   settings: () => request<Settings>("/settings"),
   certifications: () => request<Certification[]>("/certifications?public=true"),
-  organizations: () => request<Organization[]>("/v1/organizations?public=true"),
+  verifyCertificate: (certificateId: string) => request<Certification>(`/certifications/verify/${encodeURIComponent(certificateId)}`),
+  organizations: () => request<Organization[]>("/organizations?public=true"),
   submitInquiry: (payload: Record<string, unknown>) =>
     request<{ message: string }>("/inquiries", { method: "POST", body: JSON.stringify(payload) })
 };
@@ -59,13 +91,43 @@ export const adminApi = {
       method: "POST",
       body: JSON.stringify(payload)
     }),
-  dashboard: () =>
-    request<{
-      totalCertifications: number;
-      totalOrganizations: number;
-      totalInquiries: number;
-      recentActivity: Array<{ type: string; title: string; status: string; createdAt: string }>;
-    }>("/dashboard", { headers: authHeaders() }),
+  dashboard: async () => {
+    try {
+      return await request<{
+        totalCertifications: number;
+        totalOrganizations: number;
+        totalInquiries: number;
+        totalUsers: number;
+        activeCertifications: number;
+        expiredCertifications: number;
+        suspendedCertifications: number;
+        activeOrganizations: number;
+        recentActivity: Array<{ type: string; title: string; status: string; createdAt: string }>;
+      }>("/dashboard", { headers: authHeaders() });
+    } catch {
+      const [certs, orgs, inqs, users] = await Promise.all([
+        adminApi.certifications(),
+        adminApi.organizations(),
+        adminApi.inquiries(),
+        adminApi.users()
+      ]);
+      return {
+        totalCertifications: certs.length,
+        totalOrganizations: orgs.length,
+        totalInquiries: inqs.length,
+        totalUsers: users.length,
+        activeCertifications: certs.filter((c) => c.status === "Active").length,
+        expiredCertifications: certs.filter((c) => c.certificateState === "Expired").length,
+        suspendedCertifications: certs.filter((c) => c.certificateState === "Suspended").length,
+        activeOrganizations: orgs.filter((o) => o.status === "Certified").length,
+        recentActivity: [
+          ...certs.slice(0, 5).map((item) => ({ type: "Certification", title: item.name, status: item.status, createdAt: item.createdAt })),
+          ...orgs.slice(0, 5).map((item) => ({ type: "Organization", title: item.title, status: item.status, createdAt: item.createdAt })),
+          ...inqs.slice(0, 5).map((item) => ({ type: "Inquiry", title: `${item.name} - ${item.source}`, status: item.status, createdAt: item.createdAt }))
+        ].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 8)
+      };
+    }
+  },
   certifications: () => request<Certification[]>("/certifications", { headers: authHeaders() }),
   saveCertification: (payload: Partial<Certification>, id?: string) =>
     request<Certification>(id ? `/certifications/${id}` : "/certifications", {
@@ -75,15 +137,15 @@ export const adminApi = {
     }),
   deleteCertification: (id: string) =>
     request<{ message: string }>(`/certifications/${id}`, { method: "DELETE", headers: authHeaders() }),
-  organizations: () => request<Organization[]>("/v1/organizations", { headers: authHeaders() }),
+  organizations: () => request<Organization[]>("/organizations", { headers: authHeaders() }),
   saveOrganization: (payload: FormData, id?: string) =>
-    request<Organization>(id ? `/v1/organizations/${id}` : "/v1/organizations", {
+    request<Organization>(id ? `/organizations/${id}` : "/organizations", {
       method: id ? "PUT" : "POST",
       headers: authHeaders(),
       body: payload
     }),
   deleteOrganization: (id: string) =>
-    request<{ message: string }>(`/v1/organizations/${id}`, { method: "DELETE", headers: authHeaders() }),
+    request<{ message: string }>(`/organizations/${id}`, { method: "DELETE", headers: authHeaders() }),
   inquiries: () => request<Inquiry[]>("/inquiries", { headers: authHeaders() }),
   updateInquiryStatus: (id: string, status: Inquiry["status"]) =>
     request<Inquiry>(`/inquiries/${id}/status`, {
@@ -99,7 +161,16 @@ export const adminApi = {
       method: "PUT",
       headers: authHeaders(),
       body: JSON.stringify(payload)
-    })
+    }),
+  users: () => request<AdminUser[]>("/users", { headers: authHeaders() }),
+  saveUser: (payload: Partial<AdminUser> & { password?: string }, id?: string) =>
+    request<AdminUser>(id ? `/users/${id}` : "/users", {
+      method: id ? "PUT" : "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(payload)
+    }),
+  deleteUser: (id: string) =>
+    request<{ message: string }>(`/users/${id}`, { method: "DELETE", headers: authHeaders() })
 };
 
 export function asset(path?: string) {

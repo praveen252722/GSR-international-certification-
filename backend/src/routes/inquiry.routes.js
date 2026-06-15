@@ -24,6 +24,32 @@ router.get("/", protect, async (_req, res) => {
   res.json(inquiries);
 });
 
+router.get("/export/csv", protect, async (_req, res) => {
+  const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+  const rows = [
+    ["Name", "Email", "Phone", "Company", "Service", "Message", "Source", "Status", "Created At"],
+    ...inquiries.map((item) => [
+      item.name,
+      item.email,
+      item.phone,
+      item.company,
+      item.service,
+      item.message,
+      item.source,
+      item.status,
+      item.createdAt.toISOString()
+    ])
+  ];
+
+  const csv = rows
+    .map((row) => row.map((cell) => `"${String(cell || "").replaceAll('"', '""')}"`).join(","))
+    .join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=inquiries.csv");
+  res.send(csv);
+});
+
 router.patch(
   "/:id/status",
   protect,

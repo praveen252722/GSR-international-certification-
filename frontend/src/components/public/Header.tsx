@@ -19,7 +19,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[linear-gradient(90deg,#970747_0%,#7d053b_58%,#230713_100%)] shadow-[0_10px_30px_rgba(35,7,19,0.16)]">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[linear-gradient(90deg,#1595f2_0%,#0a57d5_52%,#061b82_100%)] shadow-[0_10px_30px_rgba(6,27,130,0.16)]">
       <div className="header-shell flex h-[82px] items-center justify-between gap-5">
         <Link href="/" className="brand-lockup flex min-w-0 items-center gap-3">
           <span className="grid h-[58px] w-[58px] shrink-0 place-items-center overflow-hidden rounded-full bg-white shadow-soft">
@@ -35,9 +35,9 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-5 text-[14px] font-bold text-white xl:flex">
+        <nav className="hidden items-center gap-5 text-[14px] font-semibold text-white/90 xl:flex">
           {links.map(({ label, href, id }) => (
-            <Link key={id} href={href} className="whitespace-nowrap transition hover:text-white/70">
+            <Link key={id} href={href} className="whitespace-nowrap transition hover:text-white">
               {label}
             </Link>
           ))}
@@ -52,7 +52,7 @@ export function Header() {
         </button>
       </div>
 
-      <div className={clsx("border-t border-white/10 bg-moss text-white xl:hidden", open ? "block" : "hidden")}>
+      <div className={clsx("border-t border-white/10 bg-[#061b82] text-white xl:hidden", open ? "block" : "hidden")}>
         <div className="container grid gap-1 py-4">
           {links.map(({ label, href, id }) => (
             <Link
@@ -64,7 +64,7 @@ export function Header() {
               {label}
             </Link>
           ))}
-          <Link href="/apply" className="mt-2 rounded bg-white px-4 py-3 text-center text-sm font-bold text-moss">
+          <Link href="/apply" className="mt-2 rounded bg-white px-4 py-3 text-center text-sm font-bold text-[#0a57d5]">
             Apply Now
           </Link>
         </div>

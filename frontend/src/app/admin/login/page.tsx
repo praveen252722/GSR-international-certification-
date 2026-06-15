@@ -15,16 +15,16 @@ export default function AdminLoginPage() {
     setError("");
     const form = event.currentTarget;
     const data = new FormData(form);
+    const username = String(data.get("username"));
+    const password = String(data.get("password"));
 
     try {
-      const response = await adminApi.login({
-        username: String(data.get("username")),
-        password: String(data.get("password"))
-      });
+      const response = await adminApi.login({ username, password });
       localStorage.setItem("adminToken", response.token);
       router.replace("/admin");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      const message = err instanceof Error ? err.message : "Login failed";
+      setError(message);
     } finally {
       setBusy(false);
     }
@@ -37,7 +37,6 @@ export default function AdminLoginPage() {
           <img src="/gsr-logo.png" alt="GSR logo" className="h-14 w-14 object-contain" />
         </div>
         <h1 className="mt-6 font-display text-4xl font-semibold">Admin Login</h1>
-        <p className="mt-2 text-sm text-graphite/70">Credentials are validated by the backend with JWT authentication.</p>
         <div className="mt-8 grid gap-4">
           <input className="focus-ring rounded border border-ink/10 px-4 py-3" name="username" placeholder="Username" required />
           <input className="focus-ring rounded border border-ink/10 px-4 py-3" name="password" placeholder="Password" type="password" required />

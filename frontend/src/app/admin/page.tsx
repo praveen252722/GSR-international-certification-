@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Activity, Award, Building2, Inbox } from "lucide-react";
+import { Activity, Award, Building2, Inbox, ShieldCheck, Users, AlertTriangle } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { adminApi } from "@/lib/api";
 
 type Dashboard = Awaited<ReturnType<typeof adminApi.dashboard>>;
-const metricIcons = { certifications: Award, organizations: Building2, inquiries: Inbox };
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<Dashboard | null>(null);
@@ -49,21 +48,44 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const mainMetrics = [
+    { Icon: Award, label: "Total Certificates", value: data?.totalCertifications ?? 0, sub: `${data?.activeCertifications ?? 0} Active` },
+    { Icon: Building2, label: "Certified Organizations", value: data?.activeOrganizations ?? 0, sub: `${data?.totalOrganizations ?? 0} Total` },
+    { Icon: Inbox, label: "Total Inquiries", value: data?.totalInquiries ?? 0, sub: "All submissions" },
+    { Icon: Users, label: "Admin Users", value: data?.totalUsers ?? 0, sub: "Registered" }
+  ];
+
+  const certStates = [
+    { Icon: ShieldCheck, label: "Active Certificates", value: data?.activeCertifications ?? 0, color: "text-green-600" },
+    { Icon: AlertTriangle, label: "Expired", value: data?.expiredCertifications ?? 0, color: "text-red-600" },
+    { Icon: AlertTriangle, label: "Suspended", value: data?.suspendedCertifications ?? 0, color: "text-orange-600" }
+  ];
+
   return (
     <AdminShell>
-      <div className="grid gap-5 md:grid-cols-3">
-        {[
-          { Icon: metricIcons.certifications, label: "Total Certifications", value: data?.totalCertifications ?? 0 },
-          { Icon: metricIcons.organizations, label: "Total Organizations", value: data?.totalOrganizations ?? 0 },
-          { Icon: metricIcons.inquiries, label: "Total Inquiries", value: data?.totalInquiries ?? 0 }
-        ].map(({ Icon, label, value }) => (
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {mainMetrics.map(({ Icon, label, value, sub }) => (
           <AdminCard key={label}>
             <Icon className="text-copper" />
             <div className="mt-5 text-4xl font-semibold">{value}</div>
             <div className="mt-1 text-sm text-graphite/60">{label}</div>
+            <div className="text-xs text-graphite/40">{sub}</div>
           </AdminCard>
         ))}
       </div>
+
+      <div className="mt-6 grid gap-5 sm:grid-cols-3">
+        {certStates.map(({ Icon, label, value, color }) => (
+          <AdminCard key={label}>
+            <div className="flex items-center gap-3">
+              <Icon className={color} />
+              <span className="text-sm font-semibold text-graphite/70">{label}</span>
+            </div>
+            <div className={`mt-3 text-3xl font-semibold ${color}`}>{value}</div>
+          </AdminCard>
+        ))}
+      </div>
+
       <AdminCard className="mt-6">
         <div className="flex items-center gap-3">
           <Activity className="text-moss" />

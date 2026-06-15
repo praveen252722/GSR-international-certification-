@@ -5,6 +5,12 @@ export type Certification = {
   category: string;
   status: "Active" | "Inactive";
   verificationSupport: boolean;
+  certificateId?: string;
+  companyName?: string;
+  scope?: string;
+  publishDate?: string;
+  expiryDate?: string;
+  certificateState?: "Active" | "Expired" | "Suspended";
   createdAt?: string;
 };
 
@@ -30,6 +36,14 @@ export type Inquiry = {
   source: "Contact" | "Apply";
   status: "New" | "In Progress" | "Closed";
   createdAt: string;
+};
+
+export type AdminUser = {
+  _id: string;
+  username: string;
+  name: string;
+  email: string;
+  createdAt?: string;
 };
 
 export type Settings = {

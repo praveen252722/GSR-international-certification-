@@ -1,12 +1,18 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Send } from "lucide-react";
 import { publicApi } from "@/lib/api";
 
 export function InquiryForm({ source = "Contact" }: { source?: "Contact" | "Apply" }) {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [initialService, setInitialService] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setInitialService(params.get("service") || "");
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,9 +50,11 @@ export function InquiryForm({ source = "Contact" }: { source?: "Contact" | "Appl
         <input className="focus-ring rounded border border-ink/10 bg-white px-4 py-3" name="company" placeholder="Company" />
       </div>
       <input
+        key={initialService || "service"}
         className="focus-ring rounded border border-ink/10 bg-white px-4 py-3"
         name="service"
         placeholder="Certification or service required"
+        defaultValue={initialService}
       />
       <textarea
         className="focus-ring min-h-36 rounded border border-ink/10 bg-white px-4 py-3"
@@ -56,12 +64,12 @@ export function InquiryForm({ source = "Contact" }: { source?: "Contact" | "Appl
       />
       <button
         disabled={busy}
-        className="inline-flex items-center justify-center gap-2 rounded bg-moss px-6 py-4 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-ink disabled:opacity-60"
+        className="inline-flex items-center justify-center gap-2 rounded bg-[#0a57d5] px-6 py-4 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#061b82] disabled:opacity-60"
       >
         <Send size={18} />
         {busy ? "Submitting..." : source === "Apply" ? "Submit Application" : "Send Inquiry"}
       </button>
-      {status ? <p className="text-sm font-medium text-moss">{status}</p> : null}
+      {status ? <p className="text-sm font-medium text-[#0a57d5]">{status}</p> : null}
     </form>
   );
 }

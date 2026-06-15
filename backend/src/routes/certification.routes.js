@@ -10,13 +10,28 @@ const certificationValidation = [
   body("name").trim().isLength({ min: 2 }).withMessage("Certification name is required"),
   body("description").trim().isLength({ min: 10 }).withMessage("Description is required"),
   body("category").trim().isLength({ min: 2 }).withMessage("Category is required"),
-  body("status").optional().isIn(["Active", "Inactive"]).withMessage("Invalid status")
+  body("status").optional().isIn(["Active", "Inactive"]).withMessage("Invalid status"),
+  body("certificateId").optional({ checkFalsy: true }).trim().isLength({ min: 3 }).withMessage("Certificate ID is too short"),
+  body("companyName").optional({ checkFalsy: true }).trim().isLength({ min: 2 }).withMessage("Company name is too short"),
+  body("scope").optional({ checkFalsy: true }).trim().isLength({ min: 2 }).withMessage("Scope is too short"),
+  body("publishDate").optional({ checkFalsy: true }).isISO8601().withMessage("Invalid publish date"),
+  body("expiryDate").optional({ checkFalsy: true }).isISO8601().withMessage("Invalid expiry date"),
+  body("certificateState").optional().isIn(["Active", "Expired", "Suspended"]).withMessage("Invalid certificate state")
 ];
 
 router.get("/", async (req, res) => {
   const filter = req.query.public === "true" ? { status: "Active" } : {};
   const certifications = await Certification.find(filter).sort({ createdAt: -1 });
   res.json(certifications);
+});
+
+router.get("/verify/:certificateId", async (req, res) => {
+  const certification = await Certification.findOne({
+    certificateId: String(req.params.certificateId).trim().toUpperCase()
+  });
+
+  if (!certification) return res.status(404).json({ message: "Certificate not found" });
+  res.json(certification);
 });
 
 router.post("/", protect, certificationValidation, validate, async (req, res) => {

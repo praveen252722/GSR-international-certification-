@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Award,
   BadgeCheck,
   CalendarDays,
   ClipboardCheck,
@@ -16,6 +15,7 @@ import { asset, publicApi } from "@/lib/api";
 import { services } from "@/data/services";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { WhatsappContactForm } from "@/components/public/WhatsappContactForm";
 
 export default async function HomePage() {
   const [certifications, organizations] = await Promise.all([
@@ -38,20 +38,21 @@ export default async function HomePage() {
             backgroundPosition: "center"
           }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(151,7,71,0.98),rgba(151,7,71,0.82),rgba(35,7,19,0.44))]" />
-        <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 py-16 lg:grid-cols-[1fr_480px]">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(21,149,242,0.92),rgba(10,87,213,0.9),rgba(6,27,130,0.94))]" />
+        <div className="blue-wave" />
+        <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_380px]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#fff4c8] px-4 py-2 text-xs font-bold text-moss">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
               <Sparkles size={16} /> ISO certification services in Hyderabad
             </div>
-            <h1 className="mt-6 max-w-3xl font-sans text-4xl font-extrabold leading-[1.08] text-[#ffefad] md:text-5xl lg:text-[56px]">
+            <h1 className="mt-5 max-w-3xl font-sans text-3xl font-extrabold leading-[1.12] text-white md:text-4xl lg:text-[46px]">
               GSR INTERNATIONAL CERTIFICATIONS
             </h1>
-            <p className="mt-5 max-w-2xl text-base font-medium leading-8 text-[#fff4d0] md:text-lg">
+            <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 md:text-base">
               Global Standards | Integrity | Assurance. Professional ISO documentation, certification guidance, audit
               coordination, and verification support.
             </p>
-            <div className="mt-6 grid max-w-2xl gap-3 text-sm font-semibold text-[#fff4d0] md:grid-cols-2">
+            <div className="mt-6 grid max-w-2xl gap-3 text-sm font-semibold text-white/85 md:grid-cols-2">
               <a href="tel:8008035779" className="inline-flex items-center gap-3">
                 <Phone size={17} className="text-white" /> 8008035779
               </a>
@@ -67,10 +68,10 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/apply" className="rounded bg-[#e7ab20] px-5 py-3 text-sm font-extrabold text-ink transition hover:-translate-y-0.5 hover:bg-[#f0bd3f]">
+              <Link href="/apply" className="rounded-full bg-white px-6 py-3 text-sm font-extrabold text-[#0a57d5] shadow-soft transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
                 Apply for Certification
               </Link>
-              <Link href="/certifications" className="rounded border border-white/35 px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+              <Link href="/certifications" className="rounded-full border border-white/40 px-6 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
                 Verify Certificate
               </Link>
             </div>
@@ -81,44 +82,35 @@ export default async function HomePage() {
                 ["22", "Countries Served"],
                 ["1,500+", "Certificates Issued"]
               ].map(([value, label]) => (
-                <div key={label} className="rounded border border-white/15 bg-white/10 p-4 backdrop-blur">
+                <div key={label} className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur">
                   <div className="text-2xl font-extrabold text-white">{value}</div>
-                  <div className="mt-1 text-xs font-bold text-[#fff4c8]">{label}</div>
+                  <div className="mt-1 text-xs font-bold text-white/75">{label}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="overflow-hidden rounded bg-white text-ink shadow-soft">
-            <iframe
-              src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
-              className="h-[270px] w-full border-0"
-              loading="lazy"
-              title="GSR International Certifications location map"
-            />
-            <div className="p-5">
-              <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mint text-moss">
-                  <MapPin size={19} />
-                </span>
-                <div>
-                  <h2 className="text-base font-extrabold">GSR INTERNATIONAL CERTIFICATIONS</h2>
-                  <p className="mt-2 text-sm font-semibold leading-6 text-graphite/70">Hyderabad, Telangana, India</p>
-                </div>
+          <div className="relative overflow-hidden rounded-[28px] bg-white p-5 text-[#08172f] shadow-[0_28px_90px_rgba(6,27,130,0.22)]">
+            <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[70px] bg-[#d9ebff]" />
+            <div className="relative grid place-items-center">
+              <div className="grid h-48 w-48 place-items-center rounded-full bg-[radial-gradient(circle,#f4fbff_0%,#d9ebff_64%,#96c8ff_100%)]">
+                <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-40 w-auto object-contain drop-shadow-xl hue-rotate-[175deg] saturate-[1.2]" />
               </div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <a href="https://www.google.com/maps/search/?api=1&query=Hyderabad%2C%20Telangana%2C%20India" target="_blank" className="rounded bg-moss px-4 py-3 text-center text-sm font-bold text-white">
-                  Open map
-                </a>
-                <Link href="/contact" className="rounded border border-moss/15 px-4 py-3 text-center text-sm font-bold text-moss">
-                  Contact office
-                </Link>
-              </div>
+            </div>
+            <div className="relative mt-5 rounded-2xl bg-[#e9f1fa] p-4">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#0a57d5]">Featured certification</p>
+              <h2 className="mt-2 text-lg font-extrabold">ISO 9001:2015 Quality Management</h2>
+              <p className="mt-2 text-xs leading-6 text-slate-600">
+                Documentation, audit coordination, and certification support for organizations seeking credible quality systems.
+              </p>
+              <Link href="/certifications" className="mt-4 inline-flex rounded-full bg-[#0a57d5] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#061b82]">
+                Explore certifications
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section bg-pearl">
+      <section className="section bg-white">
         <div className="container grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <SectionHeading
             eyebrow="Company overview"
@@ -131,9 +123,9 @@ export default async function HomePage() {
               ["500+", "Client engagements"],
               ["4", "Core workflow modules"]
             ].map(([value, label]) => (
-              <div key={label} className="lift-card rounded border border-moss/10 bg-white p-6 shadow-soft">
-                <div className="font-display text-4xl font-semibold text-moss">{value}</div>
-                <div className="mt-2 text-sm text-graphite/70">{label}</div>
+              <div key={label} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-soft">
+                <div className="font-sans text-4xl font-extrabold text-[#0a57d5]">{value}</div>
+                <div className="mt-2 text-sm text-slate-600">{label}</div>
               </div>
             ))}
           </div>
@@ -145,18 +137,18 @@ export default async function HomePage() {
           <SectionHeading eyebrow="Certifications" title="Standards managed through the admin workspace." />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {(featuredCertifications.length ? featuredCertifications : fallbackCertifications).map((item) => (
-              <div key={item._id || item.name} className="lift-card rounded border border-moss/10 bg-white p-6">
-                <BadgeCheck className="text-copper" />
+              <div key={item._id || item.name} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-sm">
+                <BadgeCheck className="text-[#0a57d5]" />
                 <h3 className="mt-5 text-xl font-semibold">{item.name}</h3>
-                <p className="mt-3 line-clamp-4 text-sm leading-7 text-graphite/70">{item.description}</p>
-                <div className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-moss">{item.category}</div>
+                <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">{item.description}</p>
+                <div className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#0a57d5]">{item.category}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section bg-mint">
+      <section className="section bg-[#e9f1fa]">
         <div className="container grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <SectionHeading
             eyebrow="Why choose us"
@@ -170,8 +162,8 @@ export default async function HomePage() {
               { Icon: FileCheck2, title: "Clean documentation" },
               { Icon: Factory, title: "Industry-fit advice" }
             ].map(({ Icon, title }) => (
-              <div key={title} className="lift-card rounded border border-moss/10 bg-white p-6">
-                <Icon className="text-copper" />
+              <div key={title} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6">
+                <Icon className="text-[#0a57d5]" />
                 <h3 className="mt-5 font-semibold">{title}</h3>
               </div>
             ))}
@@ -179,51 +171,81 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section bg-pearl">
+      <section className="section bg-white">
         <div className="container">
-          <SectionHeading eyebrow="Services" title="Operational support across the certification lifecycle." />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {services.slice(0, 6).map((service) => (
-              <div key={service.title} className="lift-card rounded border border-moss/10 bg-white p-6 shadow-soft">
-                <Award className="text-moss" />
-                <h3 className="mt-5 text-xl font-semibold">{service.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-graphite/70">{service.description}</p>
+          <div className="text-center">
+            <SectionHeading eyebrow="Our Services" title="ISO certification standards we support." />
+          </div>
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {[
+              services.slice(0, 5),
+              services.slice(5, 9),
+              services.slice(9, 13)
+            ].map((group, index) => (
+              <div key={index} className="lift-card rounded-2xl border border-slate-100 bg-white p-7 shadow-soft">
+                <div className={`mb-5 h-1 rounded-full ${index === 0 ? "bg-green-500" : index === 1 ? "bg-[#0a57d5]" : "bg-cyan-500"}`} />
+                <div className="divide-y divide-slate-200">
+                  {group.map((service) => (
+                    <div key={service.title} className="py-4">
+                      <h3 className="text-sm font-extrabold text-[#08172f]">{service.title}</h3>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">{service.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 rounded-2xl border border-[#0a57d5]/10 bg-[#e9f1fa] p-6 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0a57d5]">Professional services</p>
+            <h3 className="mt-2 text-2xl font-extrabold text-[#08172f]">AS 9100(D) Aerospace Space Certifications</h3>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+              Special certification support is available for aerospace, space, and other advanced quality requirements.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section bg-[#fffbea]">
+        <div className="container">
+          <SectionHeading eyebrow="Process flow" title="From first inquiry to certified recognition." />
+          <div className="mt-12 grid gap-8 md:grid-cols-4">
+            {[
+              ["Free consultation", "Fill the form or call us. We identify the right standard, review your business, and give you a clear quote."],
+              ["Documentation", "We prepare required manuals, SOPs, records, and review them with your team."],
+              ["Audit & review", "Auditors conduct review and any gaps are fixed immediately with support."],
+              ["Certificate issued", "Your certificate is issued after successful completion and approval."]
+            ].map(([step, text], index) => (
+              <div key={step} className="text-center">
+                <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border-4 border-[#0a57d5] bg-white text-3xl font-extrabold text-[#0a57d5]">
+                  {index + 1}
+                </div>
+                <h3 className="mt-6 text-lg font-bold text-[#08172f]">{step}</h3>
+                <p className="mt-4 text-sm leading-6 text-slate-600">{text}</p>
+                <span className="mt-5 inline-flex rounded bg-[#e9f1fa] px-4 py-2 text-xs font-bold text-[#0a57d5]">
+                  Step-{index + 1}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="brand-surface section text-white">
-        <div className="container">
-          <SectionHeading eyebrow="Process flow" title="From first inquiry to certified recognition." light />
-          <div className="mt-10 grid gap-4 md:grid-cols-5">
-            {["Consult", "Assess", "Prepare", "Audit", "Certify"].map((step, index) => (
-              <div key={step} className="rounded border border-white/20 bg-white/5 p-5 transition hover:bg-white/10">
-                <div className="font-display text-4xl text-white">0{index + 1}</div>
-                <div className="mt-4 font-semibold">{step}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section bg-[#eef3f7]">
+      <section className="section bg-[#e9f1fa]">
         <div className="container">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <SectionHeading eyebrow="Projects showcase" title="Latest certified organizations" />
-            <Link href="/organizations" className="text-sm font-extrabold text-ink transition hover:text-moss">
+            <Link href="/organizations" className="text-sm font-extrabold text-[#0a57d5] transition hover:text-[#061b82]">
               View all projects
             </Link>
           </div>
           <div className="mt-10 grid gap-7 md:grid-cols-3">
             {latestOrganizations.map((org) => (
-              <article key={org._id} className="lift-card overflow-hidden rounded border border-ink/10 bg-white shadow-soft">
-                <img src={asset(org.imageUrl)} alt={org.title} className="h-56 w-full bg-ink object-cover" />
+              <article key={org._id} className="lift-card overflow-hidden rounded-2xl border border-[#0a57d5]/10 bg-white shadow-soft">
+                <img src={asset(org.imageUrl)} alt={org.title} className="h-56 w-full bg-[#061b82] object-cover" />
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <span className="inline-flex items-center gap-2 text-sm font-semibold text-graphite/70">
-                      <CalendarDays size={17} className="text-moss" />
+                      <CalendarDays size={17} className="text-[#0a57d5]" />
                       {new Date(org.certificationDate).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
@@ -238,7 +260,7 @@ export default async function HomePage() {
                   <p className="mt-3 min-h-16 text-sm font-medium uppercase leading-7 text-graphite/70">
                     {org.description}
                   </p>
-                  <Link href="/contact" className="mt-6 block rounded bg-moss px-4 py-3 text-center text-sm font-extrabold text-white">
+                  <Link href={`/contact?service=${encodeURIComponent(org.title)}`} className="mt-6 block rounded bg-[#0a57d5] px-4 py-3 text-center text-sm font-extrabold text-white transition hover:bg-[#061b82]">
                     Send inquiry
                   </Link>
                 </div>
@@ -248,13 +270,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section bg-pearl">
+      <section className="section bg-white">
         <div className="container grid gap-8 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow="Testimonials" title="Trusted by teams who need calm, capable guidance." />
-            <blockquote className="mt-8 rounded border border-moss/10 bg-white p-8 text-lg leading-8 shadow-soft">
+            <blockquote className="mt-8 rounded-2xl border border-[#0a57d5]/10 bg-white p-8 text-lg leading-8 shadow-soft">
               “GSR made our certification preparation structured, fast, and easy for department heads to follow.”
-              <span className="mt-5 block text-sm font-semibold text-copper">Operations Director, Manufacturing</span>
+              <span className="mt-5 block text-sm font-semibold text-[#0a57d5]">Operations Director, Manufacturing</span>
             </blockquote>
           </div>
           <div>
@@ -265,7 +287,7 @@ export default async function HomePage() {
                 ["Can organizations apply online?", "Yes. The Apply page submits directly into admin inquiry management."],
                 ["Can admin update certified organizations?", "Yes. Updates immediately reflect on the public website."]
               ].map(([question, answer]) => (
-                <details key={question} className="rounded border border-moss/10 bg-white p-5 transition hover:border-moss/30">
+                <details key={question} className="rounded-2xl border border-[#0a57d5]/10 bg-white p-5 transition hover:border-[#0a57d5]/30">
                   <summary className="cursor-pointer font-semibold">{question}</summary>
                   <p className="mt-3 text-sm leading-7 text-graphite/70">{answer}</p>
                 </details>
@@ -275,13 +297,35 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-moss py-16 text-white">
+      <section className="bg-[#e9f1fa] py-16">
+        <div className="container grid gap-7 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="rounded-[32px] bg-white p-7 shadow-soft">
+            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#0a57d5]">Get in touch</p>
+            <h2 className="mt-2 text-3xl font-extrabold text-[#08172f]">Talk to our certification team.</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Submit your requirement and our team will guide you with the right ISO certification path.
+            </p>
+            <WhatsappContactForm />
+          </div>
+          <div className="overflow-hidden rounded-[32px] bg-white p-3 shadow-soft">
+            <iframe
+              title="GSR International Certifications Google Maps location"
+              src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
+              className="h-full min-h-[450px] w-full rounded-[24px] border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[linear-gradient(120deg,#1595f2,#061b82)] py-16 text-white">
         <div className="container flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>
             <h2 className="font-display text-4xl font-semibold">Ready for a cleaner certification path?</h2>
             <p className="mt-3 text-white/80">Submit your requirement and the admin team can manage it instantly.</p>
           </div>
-          <Link href="/apply" className="rounded bg-white px-6 py-4 font-semibold text-moss transition hover:-translate-y-0.5 hover:bg-mint">
+          <Link href="/apply" className="rounded-full bg-white px-6 py-4 font-semibold text-[#0a57d5] transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
             Apply for Certification
           </Link>
         </div>

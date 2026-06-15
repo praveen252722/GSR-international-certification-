@@ -1,25 +1,11 @@
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinary.js";
 import { Organization } from "../models/Organization.js";
 
-function imagePathFromRequest(req) {
-  return req.file ? `/uploads/${req.file.filename}` : "";
-}
-
-function removeUploadedImage(imageUrl) {
-  if (!imageUrl || !imageUrl.startsWith("/uploads/")) return;
-  const filePath = path.join(process.cwd(), imageUrl.replace(/^\//, ""));
-  fs.unlink(filePath, () => {});
-}
-
-function organizationPayload(req, existingImageUrl = "") {
-  return {
-    title: req.body.title,
-    description: req.body.description,
-    certificationDate: req.body.certificationDate,
-    status: req.body.status || "Certified",
-    imageUrl: imagePathFromRequest(req) || existingImageUrl
-  };
+function removeFromCloudinary(publicId) {
+  if (!publicId) return;
+  cloudinary.uploader.destroy(publicId, (err) => {
+    if (err) console.error("Cloudinary delete error:", err.message);
+  });
 }
 
 export async function listOrganizations(req, res) {
@@ -39,7 +25,15 @@ export async function createOrganization(req, res) {
     return res.status(422).json({ message: "Image is required for new organization records" });
   }
 
-  const organization = await Organization.create(organizationPayload(req));
+  const organization = await Organization.create({
+    title: req.body.title,
+    description: req.body.description,
+    certificationDate: req.body.certificationDate,
+    status: req.body.status || "Certified",
+    imageUrl: req.file.path,
+    publicId: req.file.filename
+  });
+
   res.status(201).json(organization);
 }
 
@@ -47,15 +41,25 @@ export async function updateOrganization(req, res) {
   const existing = await Organization.findById(req.params.id);
   if (!existing) return res.status(404).json({ message: "Organization not found" });
 
-  const payload = organizationPayload(req, existing.imageUrl);
+  const payload = {
+    title: req.body.title,
+    description: req.body.description,
+    certificationDate: req.body.certificationDate,
+    status: req.body.status || existing.status,
+    imageUrl: existing.imageUrl,
+    publicId: existing.publicId
+  };
+
+  if (req.file) {
+    removeFromCloudinary(existing.publicId);
+    payload.imageUrl = req.file.path;
+    payload.publicId = req.file.filename;
+  }
+
   const organization = await Organization.findByIdAndUpdate(req.params.id, payload, {
     new: true,
     runValidators: true
   });
-
-  if (req.file && existing.imageUrl !== organization.imageUrl) {
-    removeUploadedImage(existing.imageUrl);
-  }
 
   res.json(organization);
 }
@@ -63,6 +67,7 @@ export async function updateOrganization(req, res) {
 export async function deleteOrganization(req, res) {
   const organization = await Organization.findByIdAndDelete(req.params.id);
   if (!organization) return res.status(404).json({ message: "Organization not found" });
-  removeUploadedImage(organization.imageUrl);
+
+  removeFromCloudinary(organization.publicId);
   res.json({ message: "Organization deleted" });
 }
