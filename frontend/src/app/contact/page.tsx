@@ -19,8 +19,8 @@ export default async function ContactPage() {
                 [Phone, settings?.contactNumber || "8008035779; 7075999265"],
                 [MapPin, settings?.address || "India"]
               ].map(([Icon, text]) => (
-                <div key={String(text)} className="lift-card flex items-center gap-4 rounded-2xl border border-[#0a57d5]/10 bg-white p-5 shadow-soft">
-                  <Icon className="text-[#0a57d5]" />
+                <div key={String(text)} className="lift-card flex items-center gap-4 rounded-2xl border border-[#d6a842]/20 bg-white p-5 shadow-soft">
+                  <Icon className="text-[#b8862b]" />
                   <span className="font-medium">{String(text)}</span>
                 </div>
               ))}
@@ -29,13 +29,13 @@ export default async function ContactPage() {
               {settings?.mapUrl ? (
                 <iframe src={settings.mapUrl} className="h-72 w-full border-0" loading="lazy" title="Company map" />
               ) : (
-                <div className="grid h-72 place-items-center bg-white text-center font-semibold text-[#0a57d5]">
+                <div className="grid h-72 place-items-center bg-white text-center font-semibold text-[#b8862b]">
                   Google Maps embed can be added from Settings.
                 </div>
               )}
             </div>
           </div>
-          <div className="rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-soft md:p-8">
+          <div className="rounded-2xl border border-[#d6a842]/20 bg-white p-6 shadow-soft md:p-8">
             <InquiryForm source="Contact" />
           </div>
         </div>

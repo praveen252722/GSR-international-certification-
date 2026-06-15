@@ -12,7 +12,7 @@ export default function ApplyPage() {
             title="Submit your certification application request."
             text="Applications are stored as Apply inquiries in the backend and can be reviewed, marked, and deleted by admins."
           />
-          <div className="rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-soft md:p-8">
+          <div className="rounded-2xl border border-[#d6a842]/20 bg-white p-6 shadow-soft md:p-8">
             <InquiryForm source="Apply" />
           </div>
         </div>

@@ -42,7 +42,7 @@ a {
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(0, 171, 228, 0.16);
+  border: 1px solid rgba(214, 168, 66, 0.16);
   backdrop-filter: blur(18px);
 }
 
@@ -95,6 +95,18 @@ a {
   animation: brand-rise 720ms ease both;
 }
 
+.hero-title {
+  animation: title-reveal 1s ease both;
+}
+
+.hero-subtitle {
+  animation: title-reveal 1s ease 0.3s both;
+}
+
+.hero-cta {
+  animation: title-reveal 1s ease 0.6s both;
+}
+
 .brand-title {
   font-family: var(--font-official), Georgia, serif;
   letter-spacing: 0.01em;
@@ -116,13 +128,14 @@ a {
   }
 }
 
-@keyframes title-shine {
-  0%,
-  100% {
-    color: #ffffff;
+@keyframes title-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
-  50% {
-    color: #fff4f8;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

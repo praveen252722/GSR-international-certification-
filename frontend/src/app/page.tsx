@@ -44,15 +44,15 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,45,98,0.95),rgba(7,27,63,0.92),rgba(2,11,29,0.96))]" />
         <div className="blue-wave" />
-        <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_560px]">
+          <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_620px]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
+            <div className="hero-subtitle inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
               <Sparkles size={16} /> ISO certification services in Hyderabad
             </div>
-            <h1 className="mt-5 max-w-3xl font-sans text-3xl font-extrabold leading-[1.12] text-white md:text-4xl lg:text-[46px]">
+            <h1 className="hero-title mt-5 max-w-3xl font-sans text-3xl font-extrabold leading-[1.12] text-white md:text-4xl lg:text-[46px]">
               GSR INTERNATIONAL CERTIFICATIONS
             </h1>
-            <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 md:text-base">
+            <p className="hero-subtitle mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 md:text-base">
               Global Standards | Integrity | Assurance. Professional ISO documentation, certification guidance, audit
               coordination, and verification support.
             </p>
@@ -71,7 +71,7 @@ export default async function HomePage() {
                 <span>Hyderabad, Telangana, India</span>
               </div>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="hero-cta mt-8 flex flex-wrap gap-3">
               <Link href="/apply" className="rounded-full bg-[#d6a842] px-6 py-3 text-sm font-extrabold text-[#071b3f] shadow-soft transition hover:-translate-y-0.5 hover:bg-[#f0c766]">
                 Apply for Certification
               </Link>
@@ -93,14 +93,24 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="relative grid gap-4 overflow-hidden rounded-[28px] bg-white p-4 text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.28)] sm:grid-cols-[220px_1fr]">
+          <div className="relative grid gap-4 overflow-hidden rounded-[28px] bg-white p-4 text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.28)] sm:grid-cols-[260px_1fr]">
             <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[70px] bg-[#f5e7bd]" />
-            <div className="relative grid place-items-center rounded-3xl bg-[#f8fbff] p-4">
-              <div className="grid h-40 w-40 place-items-center rounded-full bg-[radial-gradient(circle,#fffaf0_0%,#f2d994_58%,#b8862b_100%)]">
-                <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-32 w-auto object-contain drop-shadow-xl saturate-[0.95]" />
+            <div className="relative rounded-3xl bg-[#f8fbff] p-5">
+              <div className="grid place-items-center">
+                <div className="grid h-44 w-44 place-items-center rounded-full bg-[radial-gradient(circle,#fffaf0_0%,#f2d994_58%,#b8862b_100%)]">
+                  <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-36 w-auto object-contain drop-shadow-xl saturate-[0.95]" />
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#b8862b]">ISO 9001:2015</p>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Quality Management System</p>
+              </div>
+              <div className="mt-4 rounded-xl border border-[#d6a842]/20 bg-[#fff7df] p-3 text-center">
+                <p className="text-xs font-bold text-[#8a641d]">Accredited Certification</p>
+                <p className="mt-1 text-[11px] text-slate-500">Valid for organizations seeking quality excellence</p>
               </div>
             </div>
-            <div className="relative rounded-3xl bg-[#f8fbff] p-4">
+            <div className="relative rounded-3xl bg-[#f8fbff] p-5">
               <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Featured certification</p>
               <h2 className="mt-2 text-lg font-extrabold">ISO 9001:2015 Quality Management</h2>
               <p className="mt-2 text-xs leading-6 text-slate-600">
@@ -109,10 +119,13 @@ export default async function HomePage() {
               <div className="mt-4 overflow-hidden rounded-2xl border border-[#d6a842]/30">
                 <iframe
                   src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
-                  className="h-32 w-full border-0"
+                  className="h-48 w-full border-0"
                   loading="lazy"
                   title="GSR International Certifications map"
                 />
+              </div>
+              <div className="mt-3 text-[11px] text-slate-500">
+                <span className="font-semibold text-[#b8862b]">Hyderabad, Telangana, India</span> — Serving clients nationwide
               </div>
               <Link href="https://share.google/9t5eFhauCM3hYibwG" target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
                 Explore certifications
@@ -135,8 +148,8 @@ export default async function HomePage() {
               ["500+", "Client engagements"],
               ["4", "Core workflow modules"]
             ].map(([value, label]) => (
-              <div key={label} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-soft">
-                <div className="font-sans text-4xl font-extrabold text-[#0a57d5]">{value}</div>
+              <div key={label} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-soft">
+                <div className="font-sans text-4xl font-extrabold text-[#b8862b]">{value}</div>
                 <div className="mt-2 text-sm text-slate-600">{label}</div>
               </div>
             ))}
@@ -189,11 +202,11 @@ export default async function HomePage() {
           <SectionHeading eyebrow="Certifications" title="Standards managed through the admin workspace." />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {(featuredCertifications.length ? featuredCertifications : fallbackCertifications).map((item) => (
-              <div key={item._id || item.name} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6 shadow-sm">
-                <BadgeCheck className="text-[#0a57d5]" />
+              <div key={item._id || item.name} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6 shadow-sm">
+                <BadgeCheck className="text-[#b8862b]" />
                 <h3 className="mt-5 text-xl font-semibold">{item.name}</h3>
                 <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">{item.description}</p>
-                <div className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#0a57d5]">{item.category}</div>
+                <div className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#b8862b]">{item.category}</div>
               </div>
             ))}
           </div>
@@ -214,8 +227,8 @@ export default async function HomePage() {
               { Icon: FileCheck2, title: "Clean documentation" },
               { Icon: Factory, title: "Industry-fit advice" }
             ].map(({ Icon, title }) => (
-              <div key={title} className="lift-card rounded-2xl border border-[#0a57d5]/10 bg-white p-6">
-                <Icon className="text-[#0a57d5]" />
+              <div key={title} className="lift-card rounded-2xl border border-[#b8862b]/10 bg-white p-6">
+                <Icon className="text-[#b8862b]" />
                 <h3 className="mt-5 font-semibold">{title}</h3>
               </div>
             ))}
@@ -235,7 +248,7 @@ export default async function HomePage() {
               services.slice(9, 13)
             ].map((group, index) => (
               <div key={index} className="lift-card rounded-2xl border border-slate-100 bg-white p-7 shadow-soft">
-                <div className={`mb-5 h-1 rounded-full ${index === 0 ? "bg-green-500" : index === 1 ? "bg-[#0a57d5]" : "bg-cyan-500"}`} />
+                <div className={`mb-5 h-1 rounded-full ${index === 0 ? "bg-green-500" : index === 1 ? "bg-[#b8862b]" : "bg-cyan-500"}`} />
                 <div className="divide-y divide-slate-200">
                   {group.map((service) => (
                     <div key={service.title} className="py-4">
@@ -312,9 +325,9 @@ export default async function HomePage() {
         <div className="container grid gap-8 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow="Testimonials" title="Trusted by teams who need calm, capable guidance." />
-            <blockquote className="mt-8 rounded-2xl border border-[#0a57d5]/10 bg-white p-8 text-lg leading-8 shadow-soft">
+            <blockquote className="mt-8 rounded-2xl border border-[#b8862b]/10 bg-white p-8 text-lg leading-8 shadow-soft">
               “GSR made our certification preparation structured, fast, and easy for department heads to follow.”
-              <span className="mt-5 block text-sm font-semibold text-[#0a57d5]">Operations Director, Manufacturing</span>
+              <span className="mt-5 block text-sm font-semibold text-[#b8862b]">Operations Director, Manufacturing</span>
             </blockquote>
           </div>
           <div>
@@ -325,7 +338,7 @@ export default async function HomePage() {
                 ["Can organizations apply online?", "Yes. The Apply page submits directly into admin inquiry management."],
                 ["Can admin update certified organizations?", "Yes. Updates immediately reflect on the public website."]
               ].map(([question, answer]) => (
-                <details key={question} className="rounded-2xl border border-[#0a57d5]/10 bg-white p-5 transition hover:border-[#0a57d5]/30">
+                <details key={question} className="rounded-2xl border border-[#b8862b]/10 bg-white p-5 transition hover:border-[#b8862b]/30">
                   <summary className="cursor-pointer font-semibold">{question}</summary>
                   <p className="mt-3 text-sm leading-7 text-graphite/70">{answer}</p>
                 </details>
@@ -338,7 +351,7 @@ export default async function HomePage() {
       <section className="bg-[#e9f1fa] py-16">
         <div className="container grid gap-7 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[32px] bg-white p-7 shadow-soft">
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#0a57d5]">Get in touch</p>
+            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#b8862b]">Get in touch</p>
             <h2 className="mt-2 text-3xl font-extrabold text-[#08172f]">Talk to our certification team.</h2>
             <p className="mt-3 text-sm leading-7 text-slate-600">
               Submit your requirement and our team will guide you with the right ISO certification path.
@@ -357,13 +370,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[linear-gradient(120deg,#1595f2,#061b82)] py-16 text-white">
+      <section className="bg-[linear-gradient(90deg,#0b2d62,#071b3f,#020b1d)] py-16 text-white">
         <div className="container flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>
             <h2 className="font-display text-4xl font-semibold">Ready for a cleaner certification path?</h2>
             <p className="mt-3 text-white/80">Submit your requirement and the admin team can manage it instantly.</p>
           </div>
-          <Link href="/apply" className="rounded-full bg-white px-6 py-4 font-semibold text-[#0a57d5] transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
+          <Link href="/apply" className="rounded-full bg-white px-6 py-4 font-semibold text-[#b8862b] transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
             Apply for Certification
           </Link>
         </div>

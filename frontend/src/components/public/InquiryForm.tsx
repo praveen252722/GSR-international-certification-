@@ -64,12 +64,12 @@ export function InquiryForm({ source = "Contact" }: { source?: "Contact" | "Appl
       />
       <button
         disabled={busy}
-        className="inline-flex items-center justify-center gap-2 rounded bg-[#0a57d5] px-6 py-4 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#061b82] disabled:opacity-60"
+        className="inline-flex items-center justify-center gap-2 rounded bg-[#071b3f] px-6 py-4 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#0b2d62] disabled:opacity-60"
       >
         <Send size={18} />
         {busy ? "Submitting..." : source === "Apply" ? "Submit Application" : "Send Inquiry"}
       </button>
-      {status ? <p className="text-sm font-medium text-[#0a57d5]">{status}</p> : null}
+      {status ? <p className="text-sm font-medium text-[#b8862b]">{status}</p> : null}
     </form>
   );
 }

@@ -3,7 +3,7 @@ import type { Settings } from "@/lib/types";
 
 export function Footer({ settings }: { settings?: Settings }) {
   return (
-    <footer className="bg-[linear-gradient(120deg,#061b82,#0a57d5)] py-14 text-white">
+    <footer className="bg-[linear-gradient(90deg,#0b2d62_0%,#071b3f_52%,#020b1d_100%)] py-14 text-white">
       <div className="container grid gap-10 md:grid-cols-[1.3fr_0.7fr_0.7fr]">
         <div>
           <div className="flex items-center gap-4">
@@ -17,7 +17,7 @@ export function Footer({ settings }: { settings?: Settings }) {
           </p>
         </div>
         <div>
-          <h3 className="font-semibold">Company</h3>
+          <h3 className="font-semibold text-[#d6a842]">Company</h3>
           <div className="mt-4 grid gap-3 text-sm text-white/70">
             <Link href="/about">About</Link>
             <Link href="/certifications">Certifications</Link>
@@ -26,7 +26,7 @@ export function Footer({ settings }: { settings?: Settings }) {
           </div>
         </div>
         <div>
-          <h3 className="font-semibold">Contact</h3>
+          <h3 className="font-semibold text-[#d6a842]">Contact</h3>
           <div className="mt-4 grid gap-3 text-sm text-white/70">
             <span>{settings?.contactEmail || "gsrinternationalcertifications@gmail.com"}</span>
             <span>{settings?.contactNumber || "8008035779; 7075999265"}</span>
@@ -36,7 +36,7 @@ export function Footer({ settings }: { settings?: Settings }) {
           </div>
         </div>
       </div>
-      <div className="container mt-12 border-t border-white/10 pt-6 text-xs text-white/50">
+      <div className="container mt-12 border-t border-[#d6a842]/20 pt-6 text-xs text-white/50">
         {"\u00A9"} {new Date().getFullYear()} {settings?.companyName || "GSR INTERNATIONAL CERTIFICATIONS"}. All rights reserved.
       </div>
     </footer>
