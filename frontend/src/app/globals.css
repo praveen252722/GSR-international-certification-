@@ -112,7 +112,7 @@ a {
     transparent 100%
   );
   transform: translateX(-140%);
-  animation: title-shimmer 5.2s ease-in-out infinite;
+  animation: title-shimmer 4.6s linear infinite;
   pointer-events: none;
   mix-blend-mode: screen;
 }
@@ -174,9 +174,11 @@ a {
 }
 
 @keyframes title-shimmer {
-  0%,
-  62% {
+  0% {
     transform: translateX(-140%);
+  }
+  38% {
+    transform: translateX(140%);
   }
   100% {
     transform: translateX(140%);

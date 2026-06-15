@@ -22,6 +22,8 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 import { InquiryForm } from "@/components/public/InquiryForm";
 import { ProjectImageSlider } from "@/components/public/ProjectImageSlider";
 
+const googleMapsShareUrl = "https://share.google/bUhjWGhWDHAfcaiFg";
+
 export default async function HomePage() {
   const [certifications, organizations] = await Promise.all([
     publicApi.certifications().catch(() => []),
@@ -128,7 +130,7 @@ export default async function HomePage() {
               <div className="mt-3 text-[11px] text-slate-500">
                 <span className="font-semibold text-[#b8862b]">Hyderabad, Telangana, India</span> — Serving clients nationwide
               </div>
-              <Link href="https://share.google/9t5eFhauCM3hYibwG" target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
+              <Link href={googleMapsShareUrl} target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
                 Explore certifications
               </Link>
             </div>
@@ -381,6 +383,11 @@ export default async function HomePage() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
+            <div className="px-4 pb-4 pt-3">
+              <Link href={googleMapsShareUrl} target="_blank" className="inline-flex rounded-full bg-[#071b3f] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
+                Open in Google Maps
+              </Link>
+            </div>
           </div>
         </div>
       </section>
