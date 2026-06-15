@@ -12,9 +12,11 @@ import usersRoutes from "./routes/users.routes.js";
 
 export function createApp() {
   const app = express();
-  const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000")
-    .split(",")
-    .map((origin) => origin.trim());
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "https://gsr-international-certification.vercel.app",
+    ...(process.env.FRONTEND_URL || "").split(",").map((s) => s.trim()).filter(Boolean)
+  ];
 
   app.use((req, res, next) => {
     const origin = req.headers.origin;
