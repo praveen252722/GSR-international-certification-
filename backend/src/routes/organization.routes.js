@@ -27,7 +27,11 @@ router.get("/:id", getOrganization);
 router.post(
   "/",
   protect,
-  upload.single("image"),
+  upload.fields([
+    { name: "image1", maxCount: 1 },
+    { name: "image2", maxCount: 1 },
+    { name: "image", maxCount: 1 }
+  ]),
   organizationValidation,
   validate,
   createOrganization
@@ -36,7 +40,11 @@ router.post(
 router.put(
   "/:id",
   protect,
-  upload.single("image"),
+  upload.fields([
+    { name: "image1", maxCount: 1 },
+    { name: "image2", maxCount: 1 },
+    { name: "image", maxCount: 1 }
+  ]),
   organizationValidation,
   validate,
   updateOrganization

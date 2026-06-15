@@ -19,6 +19,7 @@ export type Organization = {
   title: string;
   description: string;
   imageUrl: string;
+  imageUrl2?: string;
   certificationDate: string;
   status: "Certified" | "Active";
   createdAt?: string;

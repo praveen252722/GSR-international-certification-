@@ -19,6 +19,15 @@ const certificationValidation = [
   body("certificateState").optional().isIn(["Active", "Expired", "Suspended"]).withMessage("Invalid certificate state")
 ];
 
+function cleanCertificationPayload(payload) {
+  const cleaned = { ...payload };
+  ["certificateId", "companyName", "scope", "publishDate", "expiryDate"].forEach((field) => {
+    if (cleaned[field] === "") cleaned[field] = undefined;
+  });
+  if (cleaned.certificateId) cleaned.certificateId = String(cleaned.certificateId).trim().toUpperCase();
+  return cleaned;
+}
+
 router.get("/", async (req, res) => {
   const filter = req.query.public === "true" ? { status: "Active" } : {};
   const certifications = await Certification.find(filter).sort({ createdAt: -1 });
@@ -35,12 +44,12 @@ router.get("/verify/:certificateId", async (req, res) => {
 });
 
 router.post("/", protect, certificationValidation, validate, async (req, res) => {
-  const certification = await Certification.create(req.body);
+  const certification = await Certification.create(cleanCertificationPayload(req.body));
   res.status(201).json(certification);
 });
 
 router.put("/:id", protect, certificationValidation, validate, async (req, res) => {
-  const certification = await Certification.findByIdAndUpdate(req.params.id, req.body, {
+  const certification = await Certification.findByIdAndUpdate(req.params.id, cleanCertificationPayload(req.body), {
     new: true,
     runValidators: true
   });
@@ -58,13 +67,32 @@ router.delete("/:id", protect, async (req, res) => {
 router.get("/export/csv", protect, async (_req, res) => {
   const certifications = await Certification.find().sort({ createdAt: -1 });
   const rows = [
-    ["Certification Name", "Description", "Category", "Status", "Verification Support", "Created At"],
+    [
+      "Certification Name",
+      "Description",
+      "Category",
+      "Status",
+      "Verification Support",
+      "Certificate ID",
+      "Company Name",
+      "Scope",
+      "Publish Date",
+      "Expiry Date",
+      "Certificate State",
+      "Created At"
+    ],
     ...certifications.map((item) => [
       item.name,
       item.description,
       item.category,
       item.status,
       item.verificationSupport ? "Yes" : "No",
+      item.certificateId,
+      item.companyName,
+      item.scope,
+      item.publishDate ? item.publishDate.toISOString() : "",
+      item.expiryDate ? item.expiryDate.toISOString() : "",
+      item.certificateState,
       item.createdAt.toISOString()
     ])
   ];

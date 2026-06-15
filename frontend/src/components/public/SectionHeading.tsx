@@ -10,8 +10,8 @@ export function SectionHeading({
   light?: boolean;
 }) {
   return (
-    <div className="max-w-3xl">
-      <p className={`text-sm font-bold uppercase tracking-[0.28em] ${light ? "text-white/70" : "text-[#0a57d5]"}`}>{eyebrow}</p>
+    <div className="section-reveal max-w-3xl">
+      <p className={`text-sm font-bold uppercase tracking-[0.28em] ${light ? "text-[#d6a842]" : "text-[#b8862b]"}`}>{eyebrow}</p>
       <h2 className={`mt-3 font-sans text-3xl font-extrabold leading-tight md:text-5xl ${light ? "text-white" : "text-[#08172f]"}`}>
         {title}
       </h2>

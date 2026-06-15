@@ -12,7 +12,8 @@ type FormState = {
   description: string;
   certificationDate: string;
   status: Organization["status"];
-  image: File | null;
+  image1: File | null;
+  image2: File | null;
 };
 
 const emptyForm: FormState = {
@@ -20,7 +21,8 @@ const emptyForm: FormState = {
   description: "",
   certificationDate: "",
   status: "Certified",
-  image: null
+  image1: null,
+  image2: null
 };
 
 export default function AdminOrganizationsPage() {
@@ -67,8 +69,8 @@ export default function AdminOrganizationsPage() {
     setMessage("");
     setError("");
 
-    if (!editing && !form.image) {
-      setError("Image is required for new organization records");
+    if (!editing && !form.image1) {
+      setError("Project Image 1 is required for new organization records");
       return;
     }
 
@@ -77,7 +79,8 @@ export default function AdminOrganizationsPage() {
     payload.append("description", form.description);
     payload.append("certificationDate", form.certificationDate);
     payload.append("status", form.status);
-    if (form.image) payload.append("image", form.image);
+    if (form.image1) payload.append("image1", form.image1);
+    if (form.image2) payload.append("image2", form.image2);
 
     try {
       setSaving(true);
@@ -101,7 +104,8 @@ export default function AdminOrganizationsPage() {
       description: item.description,
       certificationDate: item.certificationDate.slice(0, 10),
       status: item.status,
-      image: null
+      image1: null,
+      image2: null
     });
   }
 
@@ -158,7 +162,14 @@ export default function AdminOrganizationsPage() {
               <option>Certified</option>
               <option>Active</option>
             </select>
-            <input className="focus-ring rounded border border-ink/10 px-4 py-3" type="file" accept="image/*" onChange={(e) => setForm({ ...form, image: e.target.files?.[0] || null })} required={!editing} />
+            <label className="grid gap-2 text-sm font-semibold text-graphite/70">
+              Project Image 1
+              <input className="focus-ring rounded border border-ink/10 px-4 py-3 text-ink" type="file" accept="image/*" onChange={(e) => setForm({ ...form, image1: e.target.files?.[0] || null })} required={!editing} />
+            </label>
+            <label className="grid gap-2 text-sm font-semibold text-graphite/70">
+              Project Image 2
+              <input className="focus-ring rounded border border-ink/10 px-4 py-3 text-ink" type="file" accept="image/*" onChange={(e) => setForm({ ...form, image2: e.target.files?.[0] || null })} />
+            </label>
             <button disabled={saving} className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white disabled:opacity-60">
               <Plus size={18} /> {saving ? "Saving..." : editing ? "Update Organization" : "Create Organization"}
             </button>
@@ -173,7 +184,7 @@ export default function AdminOrganizationsPage() {
               <table className="w-full min-w-[980px] border-separate border-spacing-y-3 text-left">
                 <thead>
                   <tr className="text-xs uppercase tracking-[0.14em] text-graphite/50">
-                    <th className="px-3 py-2">Image Preview</th>
+                    <th className="px-3 py-2">Image Previews</th>
                     <th className="px-3 py-2">Title</th>
                     <th className="px-3 py-2">Description</th>
                     <th className="px-3 py-2">Certification Date</th>
@@ -186,7 +197,12 @@ export default function AdminOrganizationsPage() {
                   {filteredItems.map((item) => (
                     <tr key={item._id} className="rounded bg-mint align-top">
                       <td className="rounded-l px-3 py-3">
-                        <img src={asset(item.imageUrl)} alt={item.title} className="h-20 w-28 rounded object-cover" />
+                        <div className="flex gap-2">
+                          <img src={asset(item.imageUrl)} alt={`${item.title} image 1`} className="h-20 w-24 rounded object-cover" />
+                          {item.imageUrl2 ? (
+                            <img src={asset(item.imageUrl2)} alt={`${item.title} image 2`} className="h-20 w-24 rounded object-cover" />
+                          ) : null}
+                        </div>
                       </td>
                       <td className="px-3 py-3 font-bold">{item.title}</td>
                       <td className="max-w-sm px-3 py-3 text-sm leading-6 text-graphite/70">{item.description}</td>

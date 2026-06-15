@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { BadgeCheck, Building2, Calendar, Search, ShieldCheck, XCircle } from "lucide-react";
+import { BadgeCheck, Building2, Calendar, QrCode, Search, ShieldCheck, XCircle } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import type { Certification } from "@/lib/types";
 
@@ -50,15 +50,13 @@ export function CertificateVerifyForm() {
   }
 
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-500/5 sm:p-8">
+    <div className="rounded-3xl border border-[#d6a842]/25 bg-white p-6 text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.26)] sm:p-8">
       <div className="text-center">
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-[#0a57d5] to-[#061b82] text-white shadow-lg shadow-blue-500/20">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#071b3f] text-[#d6a842] shadow-lg shadow-slate-950/20">
           <ShieldCheck size={28} />
         </div>
-        <h2 className="mt-5 font-sans text-2xl font-bold text-[#08172f]">Verify Certificate</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Enter the certificate ID to verify its authenticity and view details.
-        </p>
+        <h2 className="mt-5 font-sans text-2xl font-extrabold text-[#071b3f]">Verify Certificate</h2>
+        <p className="mt-1 text-sm text-slate-500">Enter the certificate ID to verify authenticity and view details.</p>
       </div>
 
       <form onSubmit={submit} className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -68,37 +66,24 @@ export function CertificateVerifyForm() {
             required
             value={certificateId}
             onChange={(event) => setCertificateId(event.target.value.toUpperCase())}
-            className="focus:ring-[#0a57d5]/20 h-14 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-sm font-bold uppercase tracking-wide text-[#08172f] placeholder:font-normal placeholder:normal-case placeholder:text-slate-300 focus:border-[#0a57d5] focus:outline-none focus:ring-4"
-            placeholder="Enter Certificate ID (e.g. GSR-2024-001)"
+            className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-sm font-bold uppercase tracking-wide text-[#08172f] placeholder:font-normal placeholder:normal-case placeholder:text-slate-300 focus:border-[#d6a842] focus:outline-none focus:ring-4 focus:ring-[#d6a842]/20"
+            placeholder="Enter Certificate ID"
           />
         </div>
         <button
           disabled={busy}
-          className="inline-flex h-14 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#0a57d5] to-[#061b82] px-8 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:shadow-blue-500/30 disabled:opacity-60"
+          className="inline-flex h-14 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#071b3f] px-8 text-sm font-bold text-white shadow-lg shadow-slate-950/20 transition-all hover:bg-[#0b2d62] disabled:opacity-60"
         >
-          {busy ? (
-            <span className="flex items-center gap-2">
-              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              Verifying...
-            </span>
-          ) : (
-            <>
-              <Search size={18} />
-              Verify Certificate
-            </>
-          )}
+          {busy ? "Verifying..." : "Verify Certificate"}
         </button>
       </form>
 
       {message ? (
-        <div className="mt-6 animate-[fadeIn_0.3s_ease] rounded-xl border border-red-100 bg-red-50 p-5">
+        <div className="mt-6 rounded-xl border border-red-100 bg-red-50 p-5">
           <div className="flex items-start gap-3">
             <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
             <div>
-              <p className="font-semibold text-red-700">Certificate Not Found</p>
+              <p className="font-semibold text-red-700">Invalid Certificate</p>
               <p className="mt-0.5 text-sm text-red-500">{message}</p>
             </div>
           </div>
@@ -106,63 +91,53 @@ export function CertificateVerifyForm() {
       ) : null}
 
       {result ? (
-        <div className="mt-6 animate-[fadeIn_0.4s_ease] overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white shadow-sm">
-          <div className="border-b border-blue-100 bg-blue-50/50 px-6 py-4">
+        <div className="mt-6 overflow-hidden rounded-3xl border border-green-200 bg-green-50 shadow-sm">
+          <div className="border-b border-green-200 bg-white px-6 py-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-green-100">
+                <div className="grid h-11 w-11 place-items-center rounded-full bg-green-100">
                   <BadgeCheck className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-green-700">Verified Certificate</p>
-                  <p className="text-sm text-slate-500">ID: {result.certificateId}</p>
+                  <p className="text-sm text-slate-500">Certificate Number: {result.certificateId}</p>
                 </div>
               </div>
               <StateBadge state={result.certificateState || result.status} />
             </div>
           </div>
-          <div className="p-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Certificate Name</p>
-                <p className="mt-1 font-bold text-[#08172f]">{result.name}</p>
-              </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Organization</p>
-                <p className="mt-1 flex items-center gap-1.5 font-semibold text-[#08172f]">
-                  <Building2 size={14} className="text-slate-400" />
-                  {result.companyName || "Not provided"}
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Issue Date</p>
-                <p className="mt-1 flex items-center gap-1.5 font-semibold text-[#08172f]">
-                  <Calendar size={14} className="text-slate-400" />
-                  {formatDate(result.publishDate)}
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Expiry Date</p>
-                <p className="mt-1 flex items-center gap-1.5 font-semibold text-[#08172f]">
-                  <Calendar size={14} className="text-slate-400" />
-                  {formatDate(result.expiryDate)}
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</p>
-                <p className="mt-1 font-semibold text-[#08172f]">{result.category}</p>
-              </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Certification Status</p>
-                <p className="mt-1 font-semibold text-[#08172f]">{result.certificateState || result.status}</p>
+          <div className="grid gap-5 p-6 lg:grid-cols-[1fr_140px]">
+            <div className="grid gap-4 md:grid-cols-2">
+              {[
+                ["Company Name", result.companyName || "Not provided", Building2],
+                ["Certificate Number", result.certificateId || "Not provided", ShieldCheck],
+                ["Certification Standard", result.name, BadgeCheck],
+                ["Issue Date", formatDate(result.publishDate), Calendar],
+                ["Expiry Date", formatDate(result.expiryDate), Calendar],
+                ["Status", result.certificateState || result.status, ShieldCheck]
+              ].map(([label, value, Icon]) => (
+                <div key={String(label)} className="rounded-2xl bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{String(label)}</p>
+                  <p className="mt-2 flex items-center gap-1.5 font-semibold text-[#08172f]">
+                    <Icon size={14} className="text-[#b8862b]" />
+                    {String(value)}
+                  </p>
+                </div>
+              ))}
+              <div className="rounded-2xl bg-white p-4 shadow-sm md:col-span-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Scope</p>
+                <p className="mt-2 leading-6 text-slate-600">{result.scope || "Not provided"}</p>
               </div>
             </div>
-            {result.scope ? (
-              <div className="mt-5 rounded-lg border border-blue-100 bg-white p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Scope</p>
-                <p className="mt-1 leading-6 text-slate-600">{result.scope}</p>
-              </div>
-            ) : null}
+            <div className="rounded-2xl bg-white p-4 text-center shadow-sm">
+              <QrCode className="mx-auto mb-3 text-[#b8862b]" />
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(result.certificateId || "")}`}
+                alt="QR verification"
+                className="mx-auto h-28 w-28"
+              />
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">QR Verification</p>
+            </div>
           </div>
         </div>
       ) : null}

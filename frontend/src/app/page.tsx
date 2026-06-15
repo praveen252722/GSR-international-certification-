@@ -5,17 +5,21 @@ import {
   ClipboardCheck,
   Factory,
   FileCheck2,
+  FileText,
   Mail,
   MapPin,
   Phone,
+  QrCode,
+  SearchCheck,
   ShieldCheck,
   Sparkles
 } from "lucide-react";
-import { asset, publicApi } from "@/lib/api";
+import { publicApi } from "@/lib/api";
 import { services } from "@/data/services";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
-import { WhatsappContactForm } from "@/components/public/WhatsappContactForm";
+import { InquiryForm } from "@/components/public/InquiryForm";
+import { ProjectImageSlider } from "@/components/public/ProjectImageSlider";
 
 export default async function HomePage() {
   const [certifications, organizations] = await Promise.all([
@@ -38,9 +42,9 @@ export default async function HomePage() {
             backgroundPosition: "center"
           }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(21,149,242,0.92),rgba(10,87,213,0.9),rgba(6,27,130,0.94))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,45,98,0.95),rgba(7,27,63,0.92),rgba(2,11,29,0.96))]" />
         <div className="blue-wave" />
-        <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_380px]">
+        <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_560px]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
               <Sparkles size={16} /> ISO certification services in Hyderabad
@@ -68,10 +72,10 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/apply" className="rounded-full bg-white px-6 py-3 text-sm font-extrabold text-[#0a57d5] shadow-soft transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
+              <Link href="/apply" className="rounded-full bg-[#d6a842] px-6 py-3 text-sm font-extrabold text-[#071b3f] shadow-soft transition hover:-translate-y-0.5 hover:bg-[#f0c766]">
                 Apply for Certification
               </Link>
-              <Link href="/certifications" className="rounded-full border border-white/40 px-6 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+              <Link href="/verify" className="rounded-full border border-[#d6a842]/60 px-6 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10">
                 Verify Certificate
               </Link>
             </div>
@@ -89,20 +93,28 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-[28px] bg-white p-5 text-[#08172f] shadow-[0_28px_90px_rgba(6,27,130,0.22)]">
-            <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[70px] bg-[#d9ebff]" />
-            <div className="relative grid place-items-center">
-              <div className="grid h-48 w-48 place-items-center rounded-full bg-[radial-gradient(circle,#f4fbff_0%,#d9ebff_64%,#96c8ff_100%)]">
-                <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-40 w-auto object-contain drop-shadow-xl hue-rotate-[175deg] saturate-[1.2]" />
+          <div className="relative grid gap-4 overflow-hidden rounded-[28px] bg-white p-4 text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.28)] sm:grid-cols-[220px_1fr]">
+            <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[70px] bg-[#f5e7bd]" />
+            <div className="relative grid place-items-center rounded-3xl bg-[#f8fbff] p-4">
+              <div className="grid h-40 w-40 place-items-center rounded-full bg-[radial-gradient(circle,#fffaf0_0%,#f2d994_58%,#b8862b_100%)]">
+                <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-32 w-auto object-contain drop-shadow-xl saturate-[0.95]" />
               </div>
             </div>
-            <div className="relative mt-5 rounded-2xl bg-[#e9f1fa] p-4">
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#0a57d5]">Featured certification</p>
+            <div className="relative rounded-3xl bg-[#f8fbff] p-4">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Featured certification</p>
               <h2 className="mt-2 text-lg font-extrabold">ISO 9001:2015 Quality Management</h2>
               <p className="mt-2 text-xs leading-6 text-slate-600">
                 Documentation, audit coordination, and certification support for organizations seeking credible quality systems.
               </p>
-              <Link href="/certifications" className="mt-4 inline-flex rounded-full bg-[#0a57d5] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#061b82]">
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#d6a842]/30">
+                <iframe
+                  src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
+                  className="h-32 w-full border-0"
+                  loading="lazy"
+                  title="GSR International Certifications map"
+                />
+              </div>
+              <Link href="https://share.google/9t5eFhauCM3hYibwG" target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
                 Explore certifications
               </Link>
             </div>
@@ -127,6 +139,46 @@ export default async function HomePage() {
                 <div className="font-sans text-4xl font-extrabold text-[#0a57d5]">{value}</div>
                 <div className="mt-2 text-sm text-slate-600">{label}</div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section bg-[#f8fbff]">
+        <div className="container">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <SectionHeading eyebrow="Projects showcase" title="Latest certified organizations" />
+            <Link href="/organizations" className="text-sm font-extrabold text-[#b8862b] transition hover:text-[#071b3f]">
+              View all projects
+            </Link>
+          </div>
+          <div className="mt-10 grid gap-7 md:grid-cols-3">
+            {latestOrganizations.map((org) => (
+              <article key={org._id} className="lift-card overflow-hidden rounded-2xl border border-[#d6a842]/20 bg-white shadow-soft">
+                <ProjectImageSlider title={org.title} imageUrl={org.imageUrl} imageUrl2={org.imageUrl2} />
+                <div className="p-6">
+                  <div className="mb-4 flex items-center justify-between gap-4">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-graphite/70">
+                      <CalendarDays size={17} className="text-[#b8862b]" />
+                      {new Date(org.certificationDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      })}
+                    </span>
+                    <span className="rounded-full bg-[#fff7df] px-3 py-1 text-xs font-extrabold text-[#8a641d]">
+                      {org.status}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-extrabold uppercase text-[#071b3f]">{org.title}</h3>
+                  <p className="mt-3 min-h-16 text-sm font-medium uppercase leading-7 text-graphite/70">
+                    {org.description}
+                  </p>
+                  <Link href={`/contact?service=${encodeURIComponent(org.title)}`} className="mt-6 block rounded bg-[#071b3f] px-4 py-3 text-center text-sm font-extrabold text-white transition hover:bg-[#0b2d62]">
+                    Send inquiry
+                  </Link>
+                </div>
+              </article>
             ))}
           </div>
         </div>
@@ -195,9 +247,8 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-2xl border border-[#0a57d5]/10 bg-[#e9f1fa] p-6 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0a57d5]">Professional services</p>
-            <h3 className="mt-2 text-2xl font-extrabold text-[#08172f]">AS 9100(D) Aerospace Space Certifications</h3>
+          <div className="mt-8 rounded-2xl border border-[#d6a842]/20 bg-[#fff7df] p-6 text-center">
+            <h3 className="text-2xl font-extrabold text-[#071b3f]">AS 9100(D) Aerospace Space Certifications</h3>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
               Special certification support is available for aerospace, space, and other advanced quality requirements.
             </p>
@@ -205,66 +256,53 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section bg-[#fffbea]">
+      <section className="section bg-[#071b3f] text-white">
         <div className="container">
-          <SectionHeading eyebrow="Process flow" title="From first inquiry to certified recognition." />
-          <div className="mt-12 grid gap-8 md:grid-cols-4">
+          <SectionHeading eyebrow="Process flow" title="Professional certification workflow." light />
+          <div className="relative mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-6">
+            <div className="process-line absolute left-10 right-10 top-10 hidden h-px xl:block" />
             {[
-              ["Free consultation", "Fill the form or call us. We identify the right standard, review your business, and give you a clear quote."],
-              ["Documentation", "We prepare required manuals, SOPs, records, and review them with your team."],
-              ["Audit & review", "Auditors conduct review and any gaps are fixed immediately with support."],
-              ["Certificate issued", "Your certificate is issued after successful completion and approval."]
-            ].map(([step, text], index) => (
-              <div key={step} className="text-center">
-                <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border-4 border-[#0a57d5] bg-white text-3xl font-extrabold text-[#0a57d5]">
-                  {index + 1}
+              {
+                Icon: FileText,
+                step: "Application Submission",
+                text: "Submit organization details and the required certification request."
+              },
+              {
+                Icon: ClipboardCheck,
+                step: "Document Verification",
+                text: "Submitted records are checked for completeness and readiness."
+              },
+              {
+                Icon: SearchCheck,
+                step: "Initial Assessment",
+                text: "The applicable standard, scope, and audit path are confirmed."
+              },
+              {
+                Icon: ShieldCheck,
+                step: "Audit & Compliance Review",
+                text: "Compliance evidence is reviewed against certification requirements."
+              },
+              {
+                Icon: BadgeCheck,
+                step: "Certification Approval",
+                text: "Approved records are prepared for official certificate publication."
+              },
+              {
+                Icon: QrCode,
+                step: "Certificate Issuance & Verification",
+                text: "The certificate is issued and becomes searchable by certificate ID."
+              }
+            ].map(({ Icon, step, text }, index) => (
+              <div key={step} className="section-reveal lift-card relative rounded-3xl border border-[#d6a842]/25 bg-white/[0.07] p-5 text-center backdrop-blur">
+                <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-[#d6a842]/60 bg-[#d6a842] text-[#071b3f] shadow-[0_16px_40px_rgba(214,168,66,0.22)]">
+                  <Icon size={24} />
                 </div>
-                <h3 className="mt-6 text-lg font-bold text-[#08172f]">{step}</h3>
-                <p className="mt-4 text-sm leading-6 text-slate-600">{text}</p>
-                <span className="mt-5 inline-flex rounded bg-[#e9f1fa] px-4 py-2 text-xs font-bold text-[#0a57d5]">
+                <span className="mt-5 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-[#d6a842]">
                   Step-{index + 1}
                 </span>
+                <h3 className="mt-4 text-base font-extrabold text-white">{step}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/70">{text}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section bg-[#e9f1fa]">
-        <div className="container">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <SectionHeading eyebrow="Projects showcase" title="Latest certified organizations" />
-            <Link href="/organizations" className="text-sm font-extrabold text-[#0a57d5] transition hover:text-[#061b82]">
-              View all projects
-            </Link>
-          </div>
-          <div className="mt-10 grid gap-7 md:grid-cols-3">
-            {latestOrganizations.map((org) => (
-              <article key={org._id} className="lift-card overflow-hidden rounded-2xl border border-[#0a57d5]/10 bg-white shadow-soft">
-                <img src={asset(org.imageUrl)} alt={org.title} className="h-56 w-full bg-[#061b82] object-cover" />
-                <div className="p-6">
-                  <div className="mb-4 flex items-center justify-between gap-4">
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-graphite/70">
-                      <CalendarDays size={17} className="text-[#0a57d5]" />
-                      {new Date(org.certificationDate).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric"
-                      })}
-                    </span>
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-extrabold text-green-700">
-                      {org.status}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-extrabold uppercase text-ink">{org.title}</h3>
-                  <p className="mt-3 min-h-16 text-sm font-medium uppercase leading-7 text-graphite/70">
-                    {org.description}
-                  </p>
-                  <Link href={`/contact?service=${encodeURIComponent(org.title)}`} className="mt-6 block rounded bg-[#0a57d5] px-4 py-3 text-center text-sm font-extrabold text-white transition hover:bg-[#061b82]">
-                    Send inquiry
-                  </Link>
-                </div>
-              </article>
             ))}
           </div>
         </div>
@@ -305,7 +343,7 @@ export default async function HomePage() {
             <p className="mt-3 text-sm leading-7 text-slate-600">
               Submit your requirement and our team will guide you with the right ISO certification path.
             </p>
-            <WhatsappContactForm />
+            <InquiryForm source="Contact" />
           </div>
           <div className="overflow-hidden rounded-[32px] bg-white p-3 shadow-soft">
             <iframe

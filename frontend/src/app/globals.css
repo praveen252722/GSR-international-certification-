@@ -51,13 +51,13 @@ a {
 }
 
 .focus-ring:focus-visible {
-  box-shadow: 0 0 0 4px rgba(0, 171, 228, 0.22);
+  box-shadow: 0 0 0 4px rgba(214, 168, 66, 0.25);
 }
 
 .brand-surface {
   background:
-    radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.2), transparent 26%),
-    linear-gradient(120deg, #1595f2 0%, #0a57d5 46%, #061b82 100%);
+    radial-gradient(circle at 12% 15%, rgba(214, 168, 66, 0.22), transparent 26%),
+    linear-gradient(120deg, #0b2d62 0%, #071b3f 52%, #020b1d 100%);
 }
 
 .blue-wave {
@@ -79,8 +79,16 @@ a {
 
 .lift-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 24px 70px rgba(6, 27, 130, 0.14);
-  border-color: rgba(0, 171, 228, 0.28);
+  box-shadow: 0 24px 70px rgba(7, 27, 63, 0.16);
+  border-color: rgba(214, 168, 66, 0.34);
+}
+
+.section-reveal {
+  animation: section-fade-up 700ms ease both;
+}
+
+.process-line {
+  background: linear-gradient(90deg, transparent, rgba(214, 168, 66, 0.7), transparent);
 }
 
 .brand-lockup {
@@ -115,6 +123,17 @@ a {
   }
   50% {
     color: #fff4f8;
+  }
+}
+
+@keyframes section-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
