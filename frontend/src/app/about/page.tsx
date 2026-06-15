@@ -41,15 +41,15 @@ export default function AboutPage() {
             <div className="section-reveal overflow-hidden rounded-3xl border border-[#d6a842]/20 bg-white shadow-[0_24px_70px_rgba(7,27,63,0.14)]">
               <img
                 src="/founder-praveen-talluri.jpeg"
-                alt="Praveen Talluri, Founder and Managing Director"
+                alt="Rajesh, Founder and Managing Director"
                 className="h-full min-h-[440px] w-full object-cover object-center"
               />
             </div>
             <div className="section-reveal rounded-3xl border border-[#d6a842]/20 bg-white p-7 shadow-soft md:p-9">
               <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#b8862b]">Founder & Managing Director</p>
-              <h2 className="mt-3 text-3xl font-extrabold text-[#071b3f]">Praveen Talluri</h2>
+              <h2 className="mt-3 text-3xl font-extrabold text-[#071b3f]">Rajesh Kumar</h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                Praveen Talluri is a technology-driven entrepreneur and certification management professional focused on
+                Rajesh Kumar is a technology-driven entrepreneur and certification management professional focused on
                 helping organizations achieve internationally recognized quality standards. With expertise in compliance
                 systems, digital transformation, and certification workflows, he has guided numerous organizations
                 through successful certification journeys. His vision is to simplify certification processes while
