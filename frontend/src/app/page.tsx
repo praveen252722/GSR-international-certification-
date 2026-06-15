@@ -260,12 +260,7 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-2xl border border-[#d6a842]/20 bg-[#fff7df] p-6 text-center">
-            <h3 className="text-2xl font-extrabold text-[#071b3f]">AS 9100(D) Aerospace Space Certifications</h3>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Special certification support is available for aerospace, space, and other advanced quality requirements.
-            </p>
-          </div>
+
         </div>
       </section>
 
@@ -370,17 +365,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[linear-gradient(90deg,#0b2d62,#071b3f,#020b1d)] py-16 text-white">
-        <div className="container flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <h2 className="font-display text-4xl font-semibold">Ready for a cleaner certification path?</h2>
-            <p className="mt-3 text-white/80">Submit your requirement and the admin team can manage it instantly.</p>
-          </div>
-          <Link href="/apply" className="rounded-full bg-white px-6 py-4 font-semibold text-[#b8862b] transition hover:-translate-y-0.5 hover:bg-[#e9f1fa]">
-            Apply for Certification
-          </Link>
-        </div>
-      </section>
+
     </PublicShell>
   );
 }

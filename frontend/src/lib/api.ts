@@ -35,7 +35,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     });
 
     if (!response.ok) {
-      let errorBody: { message?: string } = {};
+      let errorBody: { message?: string; errors?: Array<{ field: string; message: string }> } = {};
       try { errorBody = await response.json(); } catch { /* ignore */ }
       debugLog("error", `${response.status} ${url}`, errorBody.message || "");
 
@@ -51,8 +51,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         404: "404 Not Found",
         500: "500 Internal Server Error"
       };
-      const prefix = statusLabels[response.status] || `HTTP ${response.status}`;
-      const detail = errorBody.message || response.statusText;
+      const prefix = statusLabels[response.status] || `Error ${response.status}`;
+      let detail = errorBody.message || response.statusText;
+      if (response.status === 422 && errorBody.errors?.length) {
+        detail += `: ${errorBody.errors.map((e) => `${e.field} ${e.message}`).join(", ")}`;
+      }
       throw new Error(`${prefix}: ${detail}`);
     }
 
