@@ -44,7 +44,18 @@ export type AdminUser = {
   username: string;
   name: string;
   email: string;
+  role: "admin" | "user";
+  isProtected?: boolean;
+  lastLogin?: string;
   createdAt?: string;
+};
+
+export type SocialLinks = {
+  linkedin?: string;
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+  x?: string;
 };
 
 export type Settings = {
@@ -56,10 +67,37 @@ export type Settings = {
   whatsapp?: string;
   domain?: string;
   mapUrl?: string;
-  socialLinks: {
-    linkedin?: string;
-    facebook?: string;
-    instagram?: string;
-    x?: string;
+  copyright?: string;
+  socialLinks: SocialLinks;
+};
+
+export type ActivityLog = {
+  _id: string;
+  adminId?: string;
+  adminName: string;
+  adminEmail: string;
+  adminRole: string;
+  action: string;
+  module: string;
+  description: string;
+  targetId?: string;
+  targetName?: string;
+  ipAddress: string;
+  browser: string;
+  device: string;
+  success: boolean;
+  createdAt: string;
+};
+
+export type LoginResponse = {
+  token: string;
+  refreshToken: string;
+  admin: {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    role: "admin" | "user";
   };
+  expiresIn: number;
 };

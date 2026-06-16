@@ -11,15 +11,24 @@ export async function protect(req, res, next) {
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const admin = await Admin.findById(payload.id).select("_id name email username");
+    const admin = await Admin.findById(payload.id).select("_id name email username role isProtected");
 
     if (!admin) {
       return res.status(401).json({ message: "Invalid authentication token" });
     }
 
     req.admin = admin;
+    req.adminRole = admin.role;
+
+    if (payload.type !== "refresh") {
+      await Admin.findByIdAndUpdate(admin._id, { lastActivity: new Date() });
+    }
+
     next();
-  } catch {
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired", code: "TOKEN_EXPIRED" });
+    }
     res.status(401).json({ message: "Invalid or expired authentication token" });
   }
 }

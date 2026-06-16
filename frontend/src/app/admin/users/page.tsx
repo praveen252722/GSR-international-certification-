@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { Pencil, Plus, ShieldCheck, Trash2, X } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { adminApi } from "@/lib/api";
@@ -11,9 +11,10 @@ type UserForm = {
   username: string;
   password: string;
   name: string;
+  role: "admin" | "user";
 };
 
-const emptyForm: UserForm = { username: "", password: "", name: "" };
+const emptyForm: UserForm = { username: "", password: "", name: "", role: "user" };
 
 export default function AdminUsersPage() {
   const [items, setItems] = useState<AdminUser[]>([]);
@@ -22,6 +23,18 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+
+  const isAdmin = currentUser?.role === "admin";
+
+  useEffect(() => {
+    const stored = localStorage.getItem("adminUser");
+    if (stored) {
+      try {
+        setCurrentUser(JSON.parse(stored));
+      } catch { /* ignore */ }
+    }
+  }, []);
 
   async function load() {
     setLoading(true);
@@ -46,10 +59,16 @@ export default function AdminUsersPage() {
     event.preventDefault();
     setMessage("");
     setError("");
+    if (!isAdmin) {
+      setError("Only administrators can manage users.");
+      return;
+    }
 
     try {
       const payload: Record<string, string> = { username: form.username, name: form.name };
       if (form.password) payload.password = form.password;
+      if (editing && form.role) payload.role = form.role;
+      if (!editing) payload.role = "user";
       await adminApi.saveUser(payload, editing);
       setMessage(editing ? "User updated successfully" : "User created successfully");
       resetForm();
@@ -60,14 +79,22 @@ export default function AdminUsersPage() {
   }
 
   function edit(item: AdminUser) {
+    if (!isAdmin) {
+      setError("Only administrators can edit users.");
+      return;
+    }
     setMessage("");
     setError("");
     setEditing(item._id);
-    setForm({ username: item.username, password: "", name: item.name });
+    setForm({ username: item.username, password: "", name: item.name, role: item.role || "user" });
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this user?")) return;
+    if (!isAdmin) {
+      setError("Only administrators can delete users.");
+      return;
+    }
+    if (!confirm("Delete this user? This action cannot be undone.")) return;
     setMessage("");
     setError("");
     try {
@@ -84,30 +111,43 @@ export default function AdminUsersPage() {
       <div className="mb-6">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Administration</p>
         <h2 className="mt-1 font-display text-4xl font-semibold">User Management</h2>
+        {!isAdmin && (
+          <p className="mt-2 text-sm font-semibold text-amber-600">
+            You have read-only access. Contact an administrator to make changes.
+          </p>
+        )}
       </div>
 
       {message ? <div className="mb-4 rounded border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">{message}</div> : null}
       {error ? <div className="mb-4 rounded border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
 
       <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-        <AdminCard>
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-xl font-semibold">{editing ? "Update User" : "Create User"}</h3>
-            {editing ? (
-              <button onClick={resetForm} className="grid h-9 w-9 place-items-center rounded bg-mint text-moss" aria-label="Cancel edit">
-                <X size={16} />
+        {isAdmin && (
+          <AdminCard>
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-xl font-semibold">{editing ? "Update User" : "Create User"}</h3>
+              {editing ? (
+                <button onClick={resetForm} className="grid h-9 w-9 place-items-center rounded bg-mint text-moss" aria-label="Cancel edit">
+                  <X size={16} />
+                </button>
+              ) : null}
+            </div>
+            <form onSubmit={submit} className="mt-5 grid gap-4">
+              <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required />
+              <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+              <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder={editing ? "New Password (leave blank to keep)" : "Password"} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={!editing} />
+              {editing && (
+                <select className="focus-ring rounded border border-ink/10 px-4 py-3" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as "admin" | "user" })}>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              )}
+              <button className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white">
+                <Plus size={18} /> {editing ? "Update User" : "Create User"}
               </button>
-            ) : null}
-          </div>
-          <form onSubmit={submit} className="mt-5 grid gap-4">
-            <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required />
-            <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-            <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder={editing ? "New Password (leave blank to keep)" : "Password"} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={!editing} />
-            <button className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white">
-              <Plus size={18} /> {editing ? "Update User" : "Create User"}
-            </button>
-          </form>
-        </AdminCard>
+            </form>
+          </AdminCard>
+        )}
 
         <AdminCard>
           {loading ? (
@@ -120,6 +160,7 @@ export default function AdminUsersPage() {
                     <th className="px-3 py-2">Username</th>
                     <th className="px-3 py-2">Name</th>
                     <th className="px-3 py-2">Email</th>
+                    <th className="px-3 py-2">Role</th>
                     <th className="px-3 py-2">Created</th>
                     <th className="px-3 py-2">Actions</th>
                   </tr>
@@ -127,18 +168,49 @@ export default function AdminUsersPage() {
                 <tbody>
                   {items.map((item) => (
                     <tr key={item._id} className="rounded bg-mint align-top">
-                      <td className="rounded-l px-3 py-3 font-bold">{item.username}</td>
+                      <td className="rounded-l px-3 py-3 font-bold">
+                        <div className="flex items-center gap-2">
+                          {item.username}
+                          {item.isProtected && (
+                            <span className="inline-flex items-center gap-1 rounded bg-[#d6a842]/20 px-2 py-0.5 text-[10px] font-bold text-[#8a641d]">
+                              <ShieldCheck size={10} />
+                              Protected
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-3 py-3">{item.name}</td>
                       <td className="px-3 py-3 text-sm text-graphite/70">{item.email}</td>
+                      <td className="px-3 py-3">
+                        <span className={`rounded px-2 py-0.5 text-xs font-bold ${
+                          item.role === "admin"
+                            ? "bg-[#d6a842]/20 text-[#8a641d]"
+                            : "bg-blue-100 text-blue-700"
+                        }`}>
+                          {item.role || "user"}
+                        </span>
+                      </td>
                       <td className="px-3 py-3 text-sm text-graphite/70">{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}</td>
                       <td className="rounded-r px-3 py-3">
                         <div className="flex gap-2">
-                          <button onClick={() => edit(item)} className="grid h-10 w-10 place-items-center rounded bg-white" aria-label="Edit">
+                          <button
+                            onClick={() => edit(item)}
+                            disabled={!isAdmin}
+                            className="grid h-10 w-10 place-items-center rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                            aria-label="Edit"
+                          >
                             <Pencil size={16} />
                           </button>
-                          <button onClick={() => remove(item._id)} className="grid h-10 w-10 place-items-center rounded bg-white text-red-600" aria-label="Delete">
-                            <Trash2 size={16} />
-                          </button>
+                          {!item.isProtected && (
+                            <button
+                              onClick={() => remove(item._id)}
+                              disabled={!isAdmin}
+                              className="grid h-10 w-10 place-items-center rounded bg-white text-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                              aria-label="Delete"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

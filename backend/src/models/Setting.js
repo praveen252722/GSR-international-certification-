@@ -9,10 +9,12 @@ const settingSchema = new mongoose.Schema(
     whatsapp: { type: String, trim: true, default: "7075999265" },
     domain: { type: String, trim: true, default: "gsrinternationalcertifications.com" },
     mapUrl: { type: String, trim: true, default: "" },
+    copyright: { type: String, trim: true, default: "" },
     socialLinks: {
       linkedin: { type: String, trim: true, default: "" },
       facebook: { type: String, trim: true, default: "" },
       instagram: { type: String, trim: true, default: "" },
+      youtube: { type: String, trim: true, default: "" },
       x: { type: String, trim: true, default: "" }
     }
   },

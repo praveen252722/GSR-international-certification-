@@ -6,7 +6,14 @@ const adminSchema = new mongoose.Schema(
     name: { type: String, trim: true, required: true },
     username: { type: String, trim: true, lowercase: true, unique: true, sparse: true },
     email: { type: String, trim: true, lowercase: true, unique: true, sparse: true },
-    password: { type: String, required: true, select: false }
+    password: { type: String, required: true, select: false },
+    role: { type: String, enum: ["admin", "user"], default: "user" },
+    isProtected: { type: Boolean, default: false },
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
+    lastLogin: { type: Date, default: null },
+    lastActivity: { type: Date, default: null },
+    refreshToken: { type: String, select: false }
   },
   { timestamps: true }
 );
@@ -19,6 +26,10 @@ adminSchema.pre("save", async function hashPassword(next) {
 
 adminSchema.methods.comparePassword = function comparePassword(candidate) {
   return bcrypt.compare(candidate, this.password);
+};
+
+adminSchema.methods.isLocked = function isLocked() {
+  return this.lockUntil && this.lockUntil > new Date();
 };
 
 export const Admin = mongoose.model("Admin", adminSchema);

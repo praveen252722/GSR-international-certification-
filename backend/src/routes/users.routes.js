@@ -2,45 +2,137 @@ import express from "express";
 import { body } from "express-validator";
 import { Admin } from "../models/Admin.js";
 import { protect } from "../middleware/auth.js";
+import { adminOnly } from "../middleware/rbac.js";
 import { validate } from "../middleware/validate.js";
+import { createActivityLogger } from "../utils/activityLogger.js";
 
 const router = express.Router();
 
 const userValidation = [
   body("username").trim().isLength({ min: 3 }).withMessage("Username must be at least 3 characters"),
-  body("password").isLength({ min: 7 }).withMessage("Password must be at least 7 characters"),
+  body("password").optional({ checkFalsy: true }).isLength({ min: 7 }).withMessage("Password must be at least 7 characters"),
   body("name").trim().isLength({ min: 2 }).withMessage("Name is required")
 ];
 
-router.get("/", protect, async (_req, res) => {
-  const users = await Admin.find().select("-password");
+router.get("/", protect, adminOnly, async (_req, res) => {
+  const users = await Admin.find().select("-password -refreshToken");
   res.json(users);
 });
 
-router.post("/", protect, userValidation, validate, async (req, res) => {
+router.get("/:id", protect, async (req, res) => {
+  const targetId = req.params.id;
+  if (req.admin.role !== "admin" && req.admin._id.toString() !== targetId) {
+    return res.status(403).json({ message: "You can only view your own profile." });
+  }
+  const user = await Admin.findById(targetId).select("-password -refreshToken");
+  if (!user) return res.status(404).json({ message: "User not found" });
+  res.json(user);
+});
+
+router.post("/", protect, adminOnly, userValidation, validate, async (req, res) => {
+  const log = createActivityLogger(req);
   const { username, password, name, email } = req.body;
+
+  if (!password) {
+    return res.status(422).json({ message: "Password is required" });
+  }
+
   const exists = await Admin.findOne({ username: username.toLowerCase() });
   if (exists) return res.status(409).json({ message: "Username already exists" });
-  const user = await Admin.create({ username, password, name, email: email || `${username}@gsr.local` });
-  const { password: _, ...safe } = user.toObject();
+
+  const user = await Admin.create({
+    username,
+    password,
+    name,
+    email: email || `${username}@gsr.local`,
+    role: "user"
+  });
+
+  const { password: _, refreshToken: __, ...safe } = user.toObject();
+
+  await log({
+    action: "User Created",
+    module: "User Management",
+    description: `${req.admin.name} created user ${name}`,
+    targetId: user._id.toString(),
+    targetName: name,
+    success: true
+  });
+
   res.status(201).json(safe);
 });
 
 router.put("/:id", protect, async (req, res) => {
+  const log = createActivityLogger(req);
+  const targetId = req.params.id;
+  const target = await Admin.findById(targetId);
+
+  if (!target) return res.status(404).json({ message: "User not found" });
+
+  if (target.isProtected && req.admin.role !== "admin") {
+    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+  }
+
+  if (req.admin.role !== "admin" && req.admin._id.toString() !== targetId) {
+    return res.status(403).json({ message: "You can only update your own profile." });
+  }
+
+  if (req.body.role && req.admin.role !== "admin") {
+    return res.status(403).json({ message: "Only admins can change roles." });
+  }
+
+  if (target.isProtected && req.body.role && req.body.role !== "admin") {
+    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+  }
+
   const update = {};
   if (req.body.username) update.username = req.body.username;
   if (req.body.name) update.name = req.body.name;
   if (req.body.email) update.email = req.body.email;
   if (req.body.password) update.password = req.body.password;
-  const user = await Admin.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true }).select("-password");
+  if (req.body.role && req.admin.role === "admin") update.role = req.body.role;
+
+  const user = await Admin.findByIdAndUpdate(targetId, update, { new: true, runValidators: true }).select("-password -refreshToken");
   if (!user) return res.status(404).json({ message: "User not found" });
+
+  await log({
+    action: "User Updated",
+    module: "User Management",
+    description: `${req.admin.name} updated user ${user.name}`,
+    targetId: user._id.toString(),
+    targetName: user.name,
+    success: true
+  });
+
   res.json(user);
 });
 
-router.delete("/:id", protect, async (req, res) => {
-  const user = await Admin.findByIdAndDelete(req.params.id);
-  if (!user) return res.status(404).json({ message: "User not found" });
-  res.json({ message: "User deleted" });
+router.delete("/:id", protect, adminOnly, async (req, res) => {
+  const log = createActivityLogger(req);
+  const target = await Admin.findById(req.params.id);
+
+  if (!target) return res.status(404).json({ message: "User not found" });
+
+  if (target.isProtected) {
+    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+  }
+
+  if (target._id.toString() === req.admin._id.toString()) {
+    return res.status(403).json({ message: "You cannot delete your own account." });
+  }
+
+  await Admin.findByIdAndDelete(req.params.id);
+
+  await log({
+    action: "User Deleted",
+    module: "User Management",
+    description: `${req.admin.name} deleted user ${target.name}`,
+    targetId: target._id.toString(),
+    targetName: target.name,
+    success: true
+  });
+
+  res.json({ message: "User deleted successfully" });
 });
 
 export default router;

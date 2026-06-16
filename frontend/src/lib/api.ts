@@ -1,4 +1,4 @@
-import type { Certification, Inquiry, Organization, Settings, AdminUser } from "./types";
+import type { Certification, Inquiry, Organization, Settings, AdminUser, ActivityLog, LoginResponse } from "./types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 export const ASSET_URL = API_URL.replace(/\/api(\/v1)?\/?$/, "");
@@ -12,19 +12,73 @@ function debugLog(level: string, ...args: unknown[]) {
   }
 }
 
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
+async function refreshTokenIfNeeded(): Promise<boolean> {
+  if (isRefreshing && refreshPromise) return refreshPromise;
+
+  const token = localStorage.getItem("adminToken");
+  const refreshTk = localStorage.getItem("adminRefreshToken");
+  if (!token || !refreshTk) return false;
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: refreshTk }),
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminRefreshToken");
+        localStorage.removeItem("adminUser");
+        return false;
+      }
+
+      const data: LoginResponse = await response.json();
+      localStorage.setItem("adminToken", data.token);
+      localStorage.setItem("adminRefreshToken", data.refreshToken);
+      localStorage.setItem("adminUser", JSON.stringify(data.admin));
+      return true;
+    } catch {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken");
+      localStorage.removeItem("adminUser");
+      return false;
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+function redirectToLogin(message?: string) {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminRefreshToken");
+  localStorage.removeItem("adminUser");
+  localStorage.setItem("sessionMessage", message || "Your session has expired. Please login again.");
+  window.location.href = "/admin/login";
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
   const url = `${API_URL}${path}`;
   const hasBody = options.body && !(options.body instanceof FormData);
-  const tokenHeader = (options.headers as Record<string, string> || {}).Authorization || "";
   const reqHeaders: Record<string, string> = {
     ...(hasBody ? { "Content-Type": "application/json" } : {}),
     ...(options.headers as Record<string, string>)
   };
 
-  debugLog("info", `${options.method || "GET"} ${url}`, tokenHeader ? `token:${tokenHeader.slice(0, 25)}...` : "no-token");
+  debugLog("info", `${options.method || "GET"} ${url}`);
 
   try {
     const response = await fetch(url, {
@@ -34,31 +88,39 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       signal: controller.signal
     });
 
-    if (!response.ok) {
-      let errorBody: { message?: string; errors?: Array<{ field: string; message: string }> } = {};
-      try { errorBody = await response.json(); } catch { /* ignore */ }
-      debugLog("error", `${response.status} ${url}`, errorBody.message || "");
-
-      if (response.status === 401 && typeof window !== "undefined" && !path.startsWith("/auth/")) {
-        localStorage.removeItem("adminToken");
-        window.location.href = "/admin/login";
+    if (response.status === 401 && !path.startsWith("/auth/")) {
+      const body = await response.json().catch(() => ({}));
+      if (body.code === "TOKEN_EXPIRED") {
+        const refreshed = await refreshTokenIfNeeded();
+        if (refreshed) {
+          const newToken = localStorage.getItem("adminToken");
+          const retryResponse = await fetch(url, {
+            ...options,
+            headers: {
+              ...reqHeaders,
+              Authorization: `Bearer ${newToken}`
+            },
+            cache: "no-store",
+            signal: controller.signal
+          });
+          clearTimeout(timeout);
+          if (!retryResponse.ok) {
+            if (retryResponse.status === 401) {
+              redirectToLogin();
+              throw new Error("Session expired. Redirecting to login...");
+            }
+            return handleError(retryResponse);
+          }
+          return retryResponse.json();
+        }
+        redirectToLogin();
         throw new Error("Session expired. Redirecting to login...");
       }
-
-      const statusLabels: Record<number, string> = {
-        401: "401 Unauthorized",
-        403: "403 Forbidden",
-        404: "404 Not Found",
-        500: "500 Internal Server Error"
-      };
-      const prefix = statusLabels[response.status] || `Error ${response.status}`;
-      let detail = errorBody.message || response.statusText;
-      if (response.status === 422 && errorBody.errors?.length) {
-        detail += `: ${errorBody.errors.map((e) => `${e.field} ${e.message}`).join(", ")}`;
-      }
-      throw new Error(`${prefix}: ${detail}`);
+      redirectToLogin(body.message);
+      throw new Error("Session expired. Redirecting to login...");
     }
 
+    if (!response.ok) return handleError(response);
     return response.json();
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
@@ -72,6 +134,26 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function handleError(response: Response): Promise<never> {
+  let errorBody: { message?: string; errors?: Array<{ field: string; message: string }> } = {};
+  try { errorBody = await response.json(); } catch { /* ignore */ }
+  debugLog("error", `${response.status}`, errorBody.message || "");
+
+  const statusLabels: Record<number, string> = {
+    401: "401 Unauthorized",
+    403: "403 Forbidden",
+    404: "404 Not Found",
+    429: "429 Too Many Requests",
+    500: "500 Internal Server Error"
+  };
+  const prefix = statusLabels[response.status] || `Error ${response.status}`;
+  let detail = errorBody.message || response.statusText;
+  if (response.status === 422 && errorBody.errors?.length) {
+    detail += `: ${errorBody.errors.map((e) => `${e.field} ${e.message}`).join(", ")}`;
+  }
+  throw new Error(`${prefix}: ${detail}`);
 }
 
 export function authHeaders(): Record<string, string> {
@@ -90,11 +172,18 @@ export const publicApi = {
 };
 
 export const adminApi = {
-  login: (payload: { username?: string; email?: string; password: string }) =>
-    request<{ token: string; admin: { name: string; email: string } }>("/auth/login", {
+  login: (payload: { username?: string; email?: string; password: string; rememberMe?: boolean }) =>
+    request<LoginResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify(payload)
     }),
+
+  logout: () =>
+    request<{ message: string }>("/auth/logout", { method: "POST", headers: authHeaders() }),
+
+  refreshToken: () =>
+    refreshTokenIfNeeded(),
+
   dashboard: async () => {
     try {
       return await request<{
@@ -107,6 +196,13 @@ export const adminApi = {
         suspendedCertifications: number;
         activeOrganizations: number;
         recentActivity: Array<{ type: string; title: string; status: string; createdAt: string }>;
+        securityWidgets: {
+          totalLogs: number;
+          loginCount: number;
+          failedLogins: number;
+          recentLogins: Array<{ adminName: string; createdAt: string; ipAddress: string; browser: string; device: string }>;
+        };
+        recentActivities: Array<{ adminName: string; action: string; module: string; description: string; createdAt: string; targetName: string }>;
       }>("/dashboard", { headers: authHeaders() });
     } catch {
       const [certs, orgs, inqs, users] = await Promise.all([
@@ -128,10 +224,13 @@ export const adminApi = {
           ...certs.slice(0, 5).map((item) => ({ type: "Certification", title: item.name, status: item.status, createdAt: item.createdAt })),
           ...orgs.slice(0, 5).map((item) => ({ type: "Organization", title: item.title, status: item.status, createdAt: item.createdAt })),
           ...inqs.slice(0, 5).map((item) => ({ type: "Inquiry", title: `${item.name} - ${item.source}`, status: item.status, createdAt: item.createdAt }))
-        ].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 8)
+        ].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 8),
+        securityWidgets: { totalLogs: 0, loginCount: 0, failedLogins: 0, recentLogins: [] },
+        recentActivities: []
       };
     }
   },
+
   certifications: () => request<Certification[]>("/certifications", { headers: authHeaders() }),
   saveCertification: (payload: Partial<Certification>, id?: string) =>
     request<Certification>(id ? `/certifications/${id}` : "/certifications", {
@@ -141,6 +240,7 @@ export const adminApi = {
     }),
   deleteCertification: (id: string) =>
     request<{ message: string }>(`/certifications/${id}`, { method: "DELETE", headers: authHeaders() }),
+
   organizations: () => request<Organization[]>("/organizations", { headers: authHeaders() }),
   saveOrganization: (payload: FormData, id?: string) =>
     request<Organization>(id ? `/organizations/${id}` : "/organizations", {
@@ -150,6 +250,7 @@ export const adminApi = {
     }),
   deleteOrganization: (id: string) =>
     request<{ message: string }>(`/organizations/${id}`, { method: "DELETE", headers: authHeaders() }),
+
   inquiries: () => request<Inquiry[]>("/inquiries", { headers: authHeaders() }),
   updateInquiryStatus: (id: string, status: Inquiry["status"]) =>
     request<Inquiry>(`/inquiries/${id}/status`, {
@@ -159,6 +260,7 @@ export const adminApi = {
     }),
   deleteInquiry: (id: string) =>
     request<{ message: string }>(`/inquiries/${id}`, { method: "DELETE", headers: authHeaders() }),
+
   settings: () => request<Settings>("/settings", { headers: authHeaders() }),
   saveSettings: (payload: Settings) =>
     request<Settings>("/settings", {
@@ -166,7 +268,10 @@ export const adminApi = {
       headers: authHeaders(),
       body: JSON.stringify(payload)
     }),
+
   users: () => request<AdminUser[]>("/users", { headers: authHeaders() }),
+  getUser: (id: string) =>
+    request<AdminUser>(`/users/${id}`, { headers: authHeaders() }),
   saveUser: (payload: Partial<AdminUser> & { password?: string }, id?: string) =>
     request<AdminUser>(id ? `/users/${id}` : "/users", {
       method: id ? "PUT" : "POST",
@@ -174,7 +279,47 @@ export const adminApi = {
       body: JSON.stringify(payload)
     }),
   deleteUser: (id: string) =>
-    request<{ message: string }>(`/users/${id}`, { method: "DELETE", headers: authHeaders() })
+    request<{ message: string }>(`/users/${id}`, { method: "DELETE", headers: authHeaders() }),
+
+  activityLogs: (params?: {
+    search?: string;
+    action?: string;
+    module?: string;
+    startDate?: string;
+    endDate?: string;
+    page?: number;
+    limit?: number;
+    sort?: "asc" | "desc";
+  }) => {
+    const query = new URLSearchParams();
+    if (params?.search) query.set("search", params.search);
+    if (params?.action) query.set("action", params.action);
+    if (params?.module) query.set("module", params.module);
+    if (params?.startDate) query.set("startDate", params.startDate);
+    if (params?.endDate) query.set("endDate", params.endDate);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
+    if (params?.sort) query.set("sort", params.sort);
+    const qs = query.toString();
+    return request<{ logs: ActivityLog[]; pagination: { total: number; page: number; limit: number; pages: number } }>(
+      `/activity${qs ? `?${qs}` : ""}`,
+      { headers: authHeaders() }
+    );
+  },
+
+  exportActivityCsv: async () => {
+    const response = await fetch(`${API_URL}/activity/export/csv`, {
+      headers: authHeaders()
+    });
+    if (!response.ok) throw new Error("Export failed");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "activity-logs.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 };
 
 export function asset(path?: string) {

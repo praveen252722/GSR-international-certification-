@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { Certification } from "../models/Certification.js";
 import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
+import { createActivityLogger } from "../utils/activityLogger.js";
 
 const router = express.Router();
 
@@ -44,23 +45,50 @@ router.get("/verify/:certificateId", async (req, res) => {
 });
 
 router.post("/", protect, certificationValidation, validate, async (req, res) => {
+  const log = createActivityLogger(req);
   const certification = await Certification.create(cleanCertificationPayload(req.body));
+  await log({
+    action: "Certificate Created",
+    module: "Certifications",
+    description: `${req.admin.name} created certificate ${certification.name}`,
+    targetId: certification._id.toString(),
+    targetName: certification.name,
+    success: true
+  });
   res.status(201).json(certification);
 });
 
 router.put("/:id", protect, certificationValidation, validate, async (req, res) => {
+  const log = createActivityLogger(req);
   const certification = await Certification.findByIdAndUpdate(req.params.id, cleanCertificationPayload(req.body), {
     new: true,
     runValidators: true
   });
 
   if (!certification) return res.status(404).json({ message: "Certification not found" });
+  await log({
+    action: "Certificate Updated",
+    module: "Certifications",
+    description: `${req.admin.name} updated certificate ${certification.name}`,
+    targetId: certification._id.toString(),
+    targetName: certification.name,
+    success: true
+  });
   res.json(certification);
 });
 
 router.delete("/:id", protect, async (req, res) => {
+  const log = createActivityLogger(req);
   const certification = await Certification.findByIdAndDelete(req.params.id);
   if (!certification) return res.status(404).json({ message: "Certification not found" });
+  await log({
+    action: "Certificate Deleted",
+    module: "Certifications",
+    description: `${req.admin.name} deleted certificate ${certification.name}`,
+    targetId: certification._id.toString(),
+    targetName: certification.name,
+    success: true
+  });
   res.json({ message: "Certification deleted" });
 });
 

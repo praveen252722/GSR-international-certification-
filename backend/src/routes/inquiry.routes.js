@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { Inquiry } from "../models/Inquiry.js";
 import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
+import { createActivityLogger } from "../utils/activityLogger.js";
 
 const router = express.Router();
 
@@ -56,6 +57,7 @@ router.patch(
   [body("status").isIn(["New", "In Progress", "Closed"]).withMessage("Invalid status")],
   validate,
   async (req, res) => {
+    const log = createActivityLogger(req);
     const inquiry = await Inquiry.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
@@ -63,13 +65,34 @@ router.patch(
     );
 
     if (!inquiry) return res.status(404).json({ message: "Inquiry not found" });
+
+    await log({
+      action: "Inquiry Updated",
+      module: "Inquiries",
+      description: `${req.admin.name} updated inquiry status to ${req.body.status} for ${inquiry.name}`,
+      targetId: inquiry._id.toString(),
+      targetName: inquiry.name,
+      success: true
+    });
+
     res.json(inquiry);
   }
 );
 
 router.delete("/:id", protect, async (req, res) => {
+  const log = createActivityLogger(req);
   const inquiry = await Inquiry.findByIdAndDelete(req.params.id);
   if (!inquiry) return res.status(404).json({ message: "Inquiry not found" });
+
+  await log({
+    action: "Inquiry Deleted",
+    module: "Inquiries",
+    description: `${req.admin.name} deleted inquiry from ${inquiry.name}`,
+    targetId: inquiry._id.toString(),
+    targetName: inquiry.name,
+    success: true
+  });
+
   res.json({ message: "Inquiry deleted" });
 });
 

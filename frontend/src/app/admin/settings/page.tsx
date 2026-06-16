@@ -15,7 +15,8 @@ const initial: Settings = {
   whatsapp: "",
   domain: "",
   mapUrl: "",
-  socialLinks: { linkedin: "", facebook: "", instagram: "", x: "" }
+  copyright: "",
+  socialLinks: { linkedin: "", facebook: "", instagram: "", youtube: "", x: "" }
 };
 
 export default function AdminSettingsPage() {
@@ -31,7 +32,8 @@ export default function AdminSettingsPage() {
     setSaved("");
     const response = await adminApi.saveSettings(form);
     setForm(response);
-    setSaved("Settings saved");
+    setSaved("Settings saved successfully");
+    setTimeout(() => setSaved(""), 3000);
   }
 
   return (
@@ -52,23 +54,29 @@ export default function AdminSettingsPage() {
             <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Domain" value={form.domain || ""} onChange={(e) => setForm({ ...form, domain: e.target.value })} />
           </div>
           <textarea className="focus-ring min-h-24 rounded border border-ink/10 px-4 py-3" placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required />
-          <div className="grid gap-4 md:grid-cols-2">
-            {(["linkedin", "facebook", "instagram", "x"] as const).map((key) => (
-              <input
-                key={key}
-                className="focus-ring rounded border border-ink/10 px-4 py-3"
-                placeholder={`${key} URL`}
-                value={form.socialLinks?.[key] || ""}
-                onChange={(e) =>
-                  setForm({ ...form, socialLinks: { ...form.socialLinks, [key]: e.target.value } })
-                }
-              />
-            ))}
+          <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Copyright Text (leave empty for default)" value={form.copyright || ""} onChange={(e) => setForm({ ...form, copyright: e.target.value })} />
+          <div className="border-t border-ink/5 pt-4">
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.15em] text-graphite/60">Social Media Links</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {(["linkedin", "facebook", "instagram", "youtube", "x"] as const).map((key) => (
+                <input
+                  key={key}
+                  className="focus-ring rounded border border-ink/10 px-4 py-3"
+                  placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} URL`}
+                  value={form.socialLinks?.[key] || ""}
+                  onChange={(e) =>
+                    setForm({ ...form, socialLinks: { ...form.socialLinks, [key]: e.target.value } })
+                  }
+                />
+              ))}
+            </div>
           </div>
-          <button className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white md:w-max">
-            <Save size={18} /> Save Settings
-          </button>
-          {saved ? <p className="text-sm font-semibold text-moss">{saved}</p> : null}
+          <div className="flex items-center gap-4">
+            <button className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white md:w-max">
+              <Save size={18} /> Save Settings
+            </button>
+            {saved ? <p className="text-sm font-semibold text-green-600">{saved}</p> : null}
+          </div>
         </form>
       </AdminCard>
     </AdminShell>

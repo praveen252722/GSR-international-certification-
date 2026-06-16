@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cinzel, Inter, Playfair_Display } from "next/font/google";
+import { ScrollToTop } from "@/components/public/ScrollToTop";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -18,7 +19,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} ${cinzel.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${inter.variable} ${playfair.variable} ${cinzel.variable} font-sans antialiased`}>
+        <ScrollToTop />
+        {children}
+      </body>
     </html>
   );
 }

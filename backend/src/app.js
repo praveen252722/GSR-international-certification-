@@ -9,6 +9,7 @@ import inquiryRoutes from "./routes/inquiry.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import usersRoutes from "./routes/users.routes.js";
+import activityRoutes from "./routes/activity.routes.js";
 
 export function createApp() {
   const app = express();
@@ -53,6 +54,7 @@ export function createApp() {
   app.use("/api/v1/settings", settingsRoutes);
   app.use("/api/v1/dashboard", dashboardRoutes);
   app.use("/api/v1/users", usersRoutes);
+  app.use("/api/v1/activity", activityRoutes);
 
   app.use((err, _req, res, _next) => {
     const status = err.status || 500;

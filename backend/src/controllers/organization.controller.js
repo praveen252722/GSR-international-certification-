@@ -1,5 +1,6 @@
 import cloudinary from "../config/cloudinary.js";
 import { Organization } from "../models/Organization.js";
+import { createActivityLogger } from "../utils/activityLogger.js";
 
 function removeFromCloudinary(publicId) {
   if (!publicId) return;
@@ -32,6 +33,7 @@ export async function getOrganization(req, res) {
 
 export async function createOrganization(req, res) {
   try {
+    const log = createActivityLogger(req);
     const image1 = req.files?.image1?.[0] || req.files?.image?.[0] || req.file;
     const image2 = req.files?.image2?.[0];
 
@@ -50,6 +52,15 @@ export async function createOrganization(req, res) {
       publicId2: image2?.filename || ""
     });
 
+    await log({
+      action: "Organization Created",
+      module: "Organizations",
+      description: `${req.admin.name} created organization ${organization.title}`,
+      targetId: organization._id.toString(),
+      targetName: organization.title,
+      success: true
+    });
+
     res.status(201).json(organization);
   } catch (err) {
     console.error("createOrganization error:", err.message);
@@ -59,6 +70,7 @@ export async function createOrganization(req, res) {
 
 export async function updateOrganization(req, res) {
   try {
+    const log = createActivityLogger(req);
     const existing = await Organization.findById(req.params.id);
     if (!existing) return res.status(404).json({ message: "Organization not found" });
 
@@ -93,6 +105,15 @@ export async function updateOrganization(req, res) {
       runValidators: true
     });
 
+    await log({
+      action: "Organization Updated",
+      module: "Organizations",
+      description: `${req.admin.name} updated organization ${organization.title}`,
+      targetId: organization._id.toString(),
+      targetName: organization.title,
+      success: true
+    });
+
     res.json(organization);
   } catch (err) {
     console.error("updateOrganization error:", err.message);
@@ -102,11 +123,22 @@ export async function updateOrganization(req, res) {
 
 export async function deleteOrganization(req, res) {
   try {
+    const log = createActivityLogger(req);
     const organization = await Organization.findByIdAndDelete(req.params.id);
     if (!organization) return res.status(404).json({ message: "Organization not found" });
 
     removeFromCloudinary(organization.publicId);
     removeFromCloudinary(organization.publicId2);
+
+    await log({
+      action: "Organization Deleted",
+      module: "Organizations",
+      description: `${req.admin.name} deleted organization ${organization.title}`,
+      targetId: organization._id.toString(),
+      targetName: organization.title,
+      success: true
+    });
+
     res.json({ message: "Organization deleted" });
   } catch (err) {
     console.error("deleteOrganization error:", err.message);

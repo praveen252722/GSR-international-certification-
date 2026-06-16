@@ -15,13 +15,21 @@ const links = [
   { label: "Contact", href: "/contact", id: "contact" }
 ];
 
+function handleNavClick(href: string) {
+  if (href === "/") {
+    if (window.location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+}
+
 export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#d6a842]/20 bg-[linear-gradient(90deg,#0b2d62_0%,#071b3f_52%,#020b1d_100%)] shadow-[0_10px_30px_rgba(2,11,29,0.24)]">
       <div className="header-shell flex h-[82px] items-center justify-between gap-5">
-        <Link href="/" className="brand-lockup flex min-w-0 items-center gap-3">
+        <Link href="/" className="brand-lockup flex min-w-0 items-center gap-3" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <span className="grid h-[58px] w-[58px] shrink-0 place-items-center overflow-hidden rounded-full bg-white shadow-soft">
             <img src="/gsr-logo.png" alt="GSR International Certifications logo" className="h-[52px] w-[52px] object-contain" />
           </span>
@@ -37,7 +45,12 @@ export function Header() {
 
         <nav className="hidden items-center gap-5 text-[14px] font-semibold text-white/90 xl:flex">
           {links.map(({ label, href, id }) => (
-            <Link key={id} href={href} className="whitespace-nowrap transition hover:text-[#d6a842]">
+            <Link
+              key={id}
+              href={href}
+              onClick={() => handleNavClick(href)}
+              className="whitespace-nowrap transition hover:text-[#d6a842]"
+            >
               {label}
             </Link>
           ))}
@@ -59,12 +72,19 @@ export function Header() {
               key={id}
               href={href}
               className="rounded px-3 py-3 text-sm font-semibold hover:bg-white/10"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                handleNavClick(href);
+              }}
             >
               {label}
             </Link>
           ))}
-          <Link href="/apply" className="mt-2 rounded bg-[#d6a842] px-4 py-3 text-center text-sm font-bold text-[#071b3f]">
+          <Link
+            href="/apply"
+            className="mt-2 rounded bg-[#d6a842] px-4 py-3 text-center text-sm font-bold text-[#071b3f]"
+            onClick={() => setOpen(false)}
+          >
             Apply Now
           </Link>
         </div>
