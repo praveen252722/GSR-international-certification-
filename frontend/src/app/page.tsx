@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   BadgeCheck,
@@ -21,6 +22,16 @@ import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
 import { InquiryForm } from "@/components/public/InquiryForm";
 import { ProjectImageSlider } from "@/components/public/ProjectImageSlider";
+
+export const metadata: Metadata = {
+  title: "GSR International Certifications | ISO Certification Services",
+  description:
+    "GSR International Certifications provides professional ISO certification services, compliance support, audit coordination, documentation assistance, and certificate verification services.",
+  openGraph: {
+    title: "GSR International Certifications | ISO Certification Services", url: "https://www.gsrinternationalcertifications.com"
+  },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com" }
+};
 
 const gsrMapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15228.32494098261!2d78.378339!3d17.5212687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb8d001aa3e61f%3A0x3f949da1ebd4c5e5!2sGSR+Certification+Services!5e0!3m2!1sen!2sin!4v1";
 const googleMapsShareUrl = "https://www.google.com/maps/place/GSR+Certification+Services/@17.5212625,78.378407,17z/data=!4m6!3m5!1s0x3bcb8d001aa3e61f:0x3f949da1ebd4c5e5!8m2!3d17.5212687!4d78.378339!16s%2Fg%2F11yhl6lmz7";

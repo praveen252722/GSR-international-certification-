@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
 import { publicApi } from "@/lib/api";
+
+export const metadata: Metadata = {
+  title: "Certifications",
+  description: "View available ISO certification programs. Find the right standard for your organization and begin your certification journey with GSR International Certifications.",
+  openGraph: { title: "Certifications | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/certifications" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/certifications" }
+};
 
 export default async function CertificationsPage() {
   const certifications = await publicApi.certifications().catch(() => []);
@@ -13,7 +21,7 @@ export default async function CertificationsPage() {
           <SectionHeading
             eyebrow="Certificate Types"
             title="Certification programs available for application."
-            text="Browse certification categories and standards. Certificate authenticity checks are handled separately on the Verify Certificate page."
+            text="Browse certification categories and standards offered by GSR International Certifications. Certificate authenticity checks are handled separately on the Verify Certificate page."
             light
           />
         </div>

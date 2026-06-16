@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
 import { ProjectImageSlider } from "@/components/public/ProjectImageSlider";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Certified Organizations",
+  description: "Browse our directory of certified organizations. GSR International Certifications helps companies achieve and maintain ISO certification standards.",
+  openGraph: { title: "Certified Organizations | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/organizations" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/organizations" }
+};
 
 export default async function OrganizationsPage() {
   const organizations = await publicApi.organizations().catch(() => []);
@@ -14,6 +22,7 @@ export default async function OrganizationsPage() {
           <SectionHeading
             eyebrow="Certified organizations"
             title="Dynamic public registry of recently certified organizations."
+            text="Browse organizations certified through GSR International Certifications. Each listing reflects current status, certification date, and available scope information."
           />
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {organizations.map((org) => (

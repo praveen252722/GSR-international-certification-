@@ -15,7 +15,7 @@ export function createApp() {
   const app = express();
   const allowedOrigins = [
     "http://localhost:3000",
-    "https://gsr-international-certification.vercel.app",
+    "https://www.gsrinternationalcertifications.com",
     ...(process.env.FRONTEND_URL || "").split(",").map((s) => s.trim()).filter(Boolean)
   ];
 

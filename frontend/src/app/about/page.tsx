@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { Compass, Target } from "lucide-react";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn about GSR International Certifications — our mission, vision, and leadership in providing professional ISO certification and compliance services.",
+  openGraph: { title: "About Us | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/about" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/about" }
+};
 
 export default function AboutPage() {
   return (
@@ -22,13 +30,24 @@ export default function AboutPage() {
           </div>
           <div className="section-reveal mt-8 space-y-6 text-center text-lg leading-8 text-slate-600">
             <p>
-              GSR INTERNATIONAL CERTIFICATIONS guides organizations through every stage of the certification process,
-              from understanding requirements and preparing documentation, to submitting applications and managing
-              certification visibility through a secure digital workflow.
+              GSR International Certifications is a Hyderabad-based certification services provider dedicated to
+              helping organizations achieve internationally recognized ISO standards. Our mission is to simplify
+              the certification process through expert guidance, structured documentation support, and transparent
+              audit coordination — enabling businesses to focus on what matters most: quality, safety, and
+              continuous improvement.
             </p>
             <p>
-              Our team of certification coordinators, auditors, and client-success specialists works closely with each
-              client to ensure practical documentation, audit readiness, and responsive support at every step.
+              From ISO 9001 (Quality Management) and ISO 14001 (Environmental Management) to ISO 45001 (Occupational
+              Health & Safety), GSR International Certifications offers end-to-end compliance solutions tailored to
+              each organization's industry, size, and regulatory context. Our team of certification coordinators,
+              auditors, and client-success specialists works closely with every client to ensure practical
+              documentation, audit readiness, and responsive support at every stage of the certification journey.
+            </p>
+            <p>
+              Beyond certification guidance, GSR International Certifications provides certificate verification
+              services, compliance management tools, and ongoing support to help organizations maintain their
+              certified status. Whether you are pursuing your first ISO certification or upgrading to a newer
+              standard, our structured approach ensures clarity, efficiency, and lasting results.
             </p>
           </div>
         </div>
@@ -41,19 +60,20 @@ export default function AboutPage() {
             <div className="section-reveal overflow-hidden rounded-3xl border border-[#d6a842]/20 bg-white shadow-[0_24px_70px_rgba(7,27,63,0.14)]">
               <img
                 src="/founder-praveen-talluri.jpeg"
-                alt="Srinivas Gesala, Founder and Managing Director"
+                alt="Praveen Talluri, Founder and Managing Director"
                 className="h-full min-h-[440px] w-full object-cover object-center"
               />
             </div>
             <div className="section-reveal rounded-3xl border border-[#d6a842]/20 bg-white p-7 shadow-soft md:p-9">
               <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#b8862b]">Founder & Managing Director</p>
-              <h2 className="mt-3 text-3xl font-extrabold text-[#071b3f]">Srinivas Gesala</h2>
+              <h2 className="mt-3 text-3xl font-extrabold text-[#071b3f]">Praveen Talluri</h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                Srinivas Gesala is a technology-driven entrepreneur and certification management professional focused on
-                helping organizations achieve internationally recognized quality standards. With expertise in compliance
-                systems, digital transformation, and certification workflows, he has guided numerous organizations
-                through successful certification journeys. His vision is to simplify certification processes while
-                maintaining the highest standards of integrity, transparency, and professional excellence.
+                Praveen Talluri is a technology-driven entrepreneur and certification management professional focused on
+                helping organizations achieve internationally recognized quality standards with GSR International
+                Certifications. With expertise in compliance systems, digital transformation, and certification
+                workflows, he has guided numerous organizations through successful certification journeys. His vision
+                is to simplify certification processes while maintaining the highest standards of integrity,
+                transparency, and professional excellence.
               </p>
               <div className="mt-8 grid gap-4 md:grid-cols-2">
                 {[

@@ -91,7 +91,7 @@ export function Footer({ settings }: { settings?: Settings }) {
         </div>
       </div>
       <div className="container mt-12 border-t border-[#d6a842]/20 pt-6 text-xs text-white/50">
-        &copy; {new Date().getFullYear()} {settings?.copyright || settings?.companyName || "GSR INTERNATIONAL CERTIFICATIONS"}. All rights reserved.
+        &copy; {new Date().getFullYear()} GSR International Certifications. All Rights Reserved.
       </div>
     </footer>
   );

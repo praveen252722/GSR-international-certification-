@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { BadgeCheck } from "lucide-react";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
 import { services } from "@/data/services";
+
+export const metadata: Metadata = {
+  title: "ISO Services",
+  description: "Explore our comprehensive ISO certification services including ISO 9001, ISO 14001, ISO 45001, and industry-specific standards. Professional audit coordination and compliance support.",
+  openGraph: { title: "ISO Services | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/services" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/services" }
+};
 
 export default function ServicesPage() {
   return (
@@ -12,6 +20,7 @@ export default function ServicesPage() {
             <SectionHeading
               eyebrow="Services"
               title="A complete support suite for certification planning, readiness, and maintenance."
+              text="GSR International Certifications provides comprehensive ISO certification services across multiple standards, helping organizations achieve compliance, streamline audits, and maintain certified status."
             />
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">

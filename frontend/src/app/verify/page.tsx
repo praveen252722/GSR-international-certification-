@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { LockKeyhole, QrCode, ShieldCheck } from "lucide-react";
 import { PublicShell } from "@/components/public/PublicShell";
 import { CertificateVerifyForm } from "@/components/public/CertificateVerifyForm";
+
+export const metadata: Metadata = {
+  title: "Verify Certificate",
+  description: "Verify the authenticity of ISO certificates issued by GSR International Certifications. Enter your certificate ID to check status and validity.",
+  openGraph: { title: "Verify Certificate | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/verify" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/verify" }
+};
 
 export default function VerifyPage() {
   return (

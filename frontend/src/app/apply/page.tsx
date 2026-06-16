@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { PublicShell } from "@/components/public/PublicShell";
 import { InquiryForm } from "@/components/public/InquiryForm";
 import { SectionHeading } from "@/components/public/SectionHeading";
+
+export const metadata: Metadata = {
+  title: "Apply for Certification",
+  description: "Apply for ISO certification online. Submit your organization details and our team will guide you through the certification process with GSR International Certifications.",
+  openGraph: { title: "Apply for Certification | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/apply" },
+  alternates: { canonical: "https://www.gsrinternationalcertifications.com/apply" }
+};
 
 export default function ApplyPage() {
   return (
@@ -10,7 +18,7 @@ export default function ApplyPage() {
           <SectionHeading
             eyebrow="Apply"
             title="Submit your certification application request."
-            text="Applications are stored as Apply inquiries in the backend and can be reviewed, marked, and deleted by admins."
+            text="Apply for ISO certification with GSR International Certifications. Submit your organization details and our team will guide you through the certification process."
           />
           <div className="rounded-2xl border border-[#d6a842]/20 bg-white p-6 shadow-soft md:p-8">
             <InquiryForm source="Apply" />
