@@ -119,7 +119,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     window.location.href = "/admin/login";
   }, []);
 
-  const isAdmin = admin?.role === "admin";
+  const isAdmin = !admin?.role || admin?.role === "admin";
 
   const nav = isAdmin ? [...adminNav, ...adminOnlyNav] : adminNav;
 

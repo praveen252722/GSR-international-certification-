@@ -100,6 +100,11 @@ router.post(
       });
     }
 
+    if (!admin.role) {
+      admin.role = "admin";
+      await admin.save();
+    }
+
     await Admin.findByIdAndUpdate(admin._id, {
       loginAttempts: 0,
       lockUntil: null,

@@ -51,7 +51,7 @@ export default function AdminSettingsPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="WhatsApp Number" value={form.whatsapp || ""} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
-            <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Domain" value={form.domain || ""} onChange={(e) => setForm({ ...form, domain: e.target.value })} />
+            <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Website Domain" value={form.domain || ""} onChange={(e) => setForm({ ...form, domain: e.target.value })} />
           </div>
           <textarea className="focus-ring min-h-24 rounded border border-ink/10 px-4 py-3" placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required />
           <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Copyright Text (leave empty for default)" value={form.copyright || ""} onChange={(e) => setForm({ ...form, copyright: e.target.value })} />

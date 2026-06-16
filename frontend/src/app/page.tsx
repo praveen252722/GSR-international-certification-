@@ -22,7 +22,8 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 import { InquiryForm } from "@/components/public/InquiryForm";
 import { ProjectImageSlider } from "@/components/public/ProjectImageSlider";
 
-const googleMapsShareUrl = "https://share.google/bUhjWGhWDHAfcaiFg";
+const gsrMapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15228.32494098261!2d78.378339!3d17.5212687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb8d001aa3e61f%3A0x3f949da1ebd4c5e5!2sGSR+Certification+Services!5e0!3m2!1sen!2sin!4v1";
+const googleMapsShareUrl = "https://www.google.com/maps/place/GSR+Certification+Services/@17.5212625,78.378407,17z/data=!4m6!3m5!1s0x3bcb8d001aa3e61f:0x3f949da1ebd4c5e5!8m2!3d17.5212687!4d78.378339!16s%2Fg%2F11yhl6lmz7";
 
 export default async function HomePage() {
   const [certifications, organizations] = await Promise.all([
@@ -114,24 +115,32 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="relative rounded-3xl bg-[#f8fbff] p-5">
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Featured certification</p>
-              <h2 className="mt-2 text-lg font-extrabold">ISO 9001:2015 Quality Management</h2>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Global Certification & Compliance Services</p>
+              <h2 className="mt-2 text-lg font-extrabold">GSR International Certifications</h2>
               <p className="mt-2 text-xs leading-6 text-slate-600">
-                Documentation, audit coordination, and certification support for organizations seeking credible quality systems.
+                GSR International Certifications provides professional certification support, compliance management, audit coordination, documentation guidance, and verification services for organizations seeking internationally recognized quality standards.
               </p>
+              <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] font-semibold text-[#8a641d]">
+                <span>ISO Certification Support</span>
+                <span>Audit Coordination</span>
+                <span>Compliance Management</span>
+                <span>Documentation Assistance</span>
+                <span>Certificate Verification</span>
+                <span>Industry-Specific Solutions</span>
+              </div>
               <div className="mt-4 overflow-hidden rounded-2xl border border-[#d6a842]/30">
                 <iframe
-                  src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
+                  src={gsrMapEmbedUrl}
                   className="h-48 w-full border-0"
                   loading="lazy"
-                  title="GSR International Certifications map"
+                  title="GSR Certification Services location"
                 />
               </div>
               <div className="mt-3 text-[11px] text-slate-500">
-                <span className="font-semibold text-[#b8862b]">Hyderabad, Telangana, India</span> — Serving clients nationwide
+                <span className="font-semibold text-[#b8862b]">GSR Certification Services, Hyderabad</span> — Serving clients nationwide
               </div>
               <Link href={googleMapsShareUrl} target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
-                Explore certifications
+                View on Google Maps
               </Link>
             </div>
           </div>
@@ -378,7 +387,7 @@ export default async function HomePage() {
           <div className="overflow-hidden rounded-[32px] bg-white p-3 shadow-soft">
             <iframe
               title="GSR International Certifications Google Maps location"
-              src="https://www.google.com/maps?q=Hyderabad%2C%20Telangana%2C%20India&output=embed"
+              src={gsrMapEmbedUrl}
               className="h-full min-h-[450px] w-full rounded-[24px] border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

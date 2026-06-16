@@ -84,6 +84,9 @@ export function Footer({ settings }: { settings?: Settings }) {
             )}
             <span>{settings?.address || "India"}</span>
             {settings?.domain && <span className="text-xs opacity-60">{settings.domain}</span>}
+            <a href="https://www.google.com/maps/place/GSR+Certification+Services/@17.5212625,78.378407,17z/data=!4m6!3m5!1s0x3bcb8d001aa3e61f:0x3f949da1ebd4c5e5!8m2!3d17.5212687!4d78.378339!16s%2Fg%2F11yhl6lmz7" target="_blank" rel="noopener noreferrer" className="hover:text-[#d6a842]">
+              View on Google Maps
+            </a>
           </div>
         </div>
       </div>
