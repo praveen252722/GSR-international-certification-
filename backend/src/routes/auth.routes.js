@@ -100,9 +100,12 @@ router.post(
       });
     }
 
-    if (!admin.role) {
+    if (!admin.role || admin.role === "admin") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
       admin.role = "ADMIN";
-      await admin.save();
+    } else if (admin.role === "user") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "USER" });
+      admin.role = "USER";
     }
 
     await Admin.findByIdAndUpdate(admin._id, {
@@ -158,6 +161,14 @@ router.post("/refresh", async (req, res) => {
     const admin = await Admin.findById(payload.id).select("+refreshToken");
     if (!admin || admin.refreshToken !== refreshToken) {
       return res.status(401).json({ message: "Invalid refresh token" });
+    }
+
+    if (!admin.role || admin.role === "admin") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
+      admin.role = "ADMIN";
+    } else if (admin.role === "user") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "USER" });
+      admin.role = "USER";
     }
 
     const newAccessToken = signAccessToken(admin);

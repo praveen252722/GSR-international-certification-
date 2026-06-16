@@ -17,6 +17,14 @@ export async function protect(req, res, next) {
       return res.status(401).json({ message: "Invalid authentication token" });
     }
 
+    if (!admin.role || admin.role === "admin") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
+      admin.role = "ADMIN";
+    } else if (admin.role === "user") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "USER" });
+      admin.role = "USER";
+    }
+
     req.admin = admin;
     req.adminRole = admin.role;
 

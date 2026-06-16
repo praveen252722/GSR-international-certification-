@@ -48,7 +48,7 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,45,98,0.95),rgba(7,27,63,0.92),rgba(2,11,29,0.96))]" />
         <div className="blue-wave" />
-          <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-10 pb-44 pt-14 lg:grid-cols-[1fr_620px]">
+          <div className="container relative grid min-h-[calc(100vh-82px)] items-center gap-8 pb-40 pt-14 lg:grid-cols-[1fr_540px]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-bold text-white">
               <Sparkles size={16} /> ISO certification services in Hyderabad
@@ -97,51 +97,51 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="relative grid gap-4 overflow-hidden rounded-[28px] bg-white p-4 text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.28)] sm:grid-cols-[260px_1fr]">
-            <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[70px] bg-[#f5e7bd]" />
-            <div className="relative rounded-3xl bg-[#f8fbff] p-5">
-              <div className="grid place-items-center">
-                <div className="grid h-44 w-44 place-items-center rounded-full bg-[radial-gradient(circle,#fffaf0_0%,#f2d994_58%,#b8862b_100%)]">
-                  <img src="/iso-9001-badge.png" alt="ISO 9001 certified badge" className="h-36 w-auto object-contain drop-shadow-xl saturate-[0.95]" />
+          <div className="relative overflow-hidden rounded-[24px] bg-white text-[#08172f] shadow-[0_28px_90px_rgba(2,11,29,0.28)]">
+            <div className="absolute right-0 top-0 h-20 w-20 rounded-bl-[50px] bg-[#f5e7bd]" />
+            <div className="grid gap-3 p-3 sm:grid-cols-[200px_1fr]">
+              <div className="rounded-2xl bg-[#f8fbff] p-4 text-center">
+                <div className="grid place-items-center">
+                  <div className="grid h-32 w-32 place-items-center rounded-full bg-[radial-gradient(circle,#fffaf0_0%,#f2d994_58%,#b8862b_100%)]">
+                    <img src="/iso-9001-badge.png" alt="Certification badge" className="h-24 w-auto object-contain drop-shadow-xl saturate-[0.95]" />
+                  </div>
+                </div>
+                <div className="mt-3 rounded-xl border border-[#d6a842]/20 bg-[#fff7df] p-2.5 text-center">
+                  <p className="text-[11px] font-bold text-[#8a641d]">Accredited Certification Services</p>
+                  <p className="mt-1 text-[10px] text-slate-500">Trusted certification support for internationally recognized standards and compliance excellence.</p>
                 </div>
               </div>
-              <div className="mt-4 text-center">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#b8862b]">ISO 9001:2015</p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">Quality Management System</p>
+              <div className="rounded-2xl bg-[#f8fbff] p-4">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Global Certification & Compliance Services</p>
+                <h2 className="mt-1 text-base font-extrabold">GSR International Certifications</h2>
+                <p className="mt-1 text-[11px] leading-5 text-slate-600">
+                  Professional certification support, audit coordination, compliance management, documentation guidance, verification services, and certification solutions for organizations seeking internationally recognized standards.
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px] font-semibold text-[#8a641d]">
+                  <span>ISO Certification Support</span>
+                  <span>Audit Coordination</span>
+                  <span>Compliance Management</span>
+                  <span>Documentation Assistance</span>
+                  <span>Certificate Verification</span>
+                  <span>Industry-Specific Solutions</span>
+                </div>
+                <div className="mt-3 overflow-hidden rounded-xl border border-[#d6a842]/30">
+                  <iframe
+                    src={gsrMapEmbedUrl}
+                    className="h-32 w-full border-0"
+                    loading="lazy"
+                    title="GSR Certification Services location"
+                  />
+                </div>
+                <div className="mt-2 flex items-center justify-between gap-3">
+                  <span className="text-[10px] text-slate-500">
+                    <span className="font-semibold text-[#b8862b]">GSR Certification Services, Hyderabad</span>
+                  </span>
+                  <Link href={googleMapsShareUrl} target="_blank" className="inline-flex shrink-0 rounded-full bg-[#071b3f] px-3 py-1.5 text-[10px] font-bold text-white transition hover:bg-[#0b2d62]">
+                    View on Google Maps
+                  </Link>
+                </div>
               </div>
-              <div className="mt-4 rounded-xl border border-[#d6a842]/20 bg-[#fff7df] p-3 text-center">
-                <p className="text-xs font-bold text-[#8a641d]">Accredited Certification</p>
-                <p className="mt-1 text-[11px] text-slate-500">Valid for organizations seeking quality excellence</p>
-              </div>
-            </div>
-            <div className="relative rounded-3xl bg-[#f8fbff] p-5">
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#b8862b]">Global Certification & Compliance Services</p>
-              <h2 className="mt-2 text-lg font-extrabold">GSR International Certifications</h2>
-              <p className="mt-2 text-xs leading-6 text-slate-600">
-                GSR International Certifications provides professional certification support, compliance management, audit coordination, documentation guidance, and verification services for organizations seeking internationally recognized quality standards.
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] font-semibold text-[#8a641d]">
-                <span>ISO Certification Support</span>
-                <span>Audit Coordination</span>
-                <span>Compliance Management</span>
-                <span>Documentation Assistance</span>
-                <span>Certificate Verification</span>
-                <span>Industry-Specific Solutions</span>
-              </div>
-              <div className="mt-4 overflow-hidden rounded-2xl border border-[#d6a842]/30">
-                <iframe
-                  src={gsrMapEmbedUrl}
-                  className="h-48 w-full border-0"
-                  loading="lazy"
-                  title="GSR Certification Services location"
-                />
-              </div>
-              <div className="mt-3 text-[11px] text-slate-500">
-                <span className="font-semibold text-[#b8862b]">GSR Certification Services, Hyderabad</span> — Serving clients nationwide
-              </div>
-              <Link href={googleMapsShareUrl} target="_blank" className="mt-4 inline-flex rounded-full bg-[#071b3f] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#0b2d62]">
-                View on Google Maps
-              </Link>
             </div>
           </div>
         </div>
