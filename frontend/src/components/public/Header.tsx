@@ -16,7 +16,7 @@ const links = [
 ];
 
 function handleNavClick(href: string) {
-  if (href === "/" && typeof window !== "undefined") {
+  if (typeof window !== "undefined") {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
