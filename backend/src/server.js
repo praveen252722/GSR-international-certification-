@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import { createApp } from "./app.js";
+import { Admin } from "./models/Admin.js";
 
 dotenv.config();
 
@@ -16,8 +17,30 @@ process.on("unhandledRejection", (reason) => {
   console.error("UNHANDLED REJECTION:", reason);
 });
 
+async function migrateRoles() {
+  try {
+    const lcAdmin = await Admin.updateMany({ role: "admin" }, { $set: { role: "ADMIN" } });
+    if (lcAdmin.modifiedCount > 0) console.log(`Normalized ${lcAdmin.modifiedCount} admin -> ADMIN`);
+    const lcUser = await Admin.updateMany({ role: "user" }, { $set: { role: "USER" } });
+    if (lcUser.modifiedCount > 0) console.log(`Normalized ${lcUser.modifiedCount} user -> USER`);
+    const protectedFix = await Admin.updateMany(
+      { isProtected: true, role: { $ne: "ADMIN" } },
+      { $set: { role: "ADMIN" } }
+    );
+    if (protectedFix.modifiedCount > 0) console.log(`Fixed ${protectedFix.modifiedCount} protected admin role(s)`);
+    const adminUserFix = await Admin.updateOne(
+      { username: "admin" },
+      { $set: { isProtected: true, role: "ADMIN" } }
+    );
+    if (adminUserFix.modifiedCount > 0) console.log("Ensured admin user is protected ADMIN");
+  } catch (err) {
+    console.error("Role migration error:", err.message);
+  }
+}
+
 connectDB()
-  .then(() => {
+  .then(async () => {
+    await migrateRoles();
     const app = createApp();
     const server = app.listen(port, () => {
       console.log(`API listening on port ${port}`);

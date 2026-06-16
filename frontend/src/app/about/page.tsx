@@ -40,7 +40,7 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-8 lg:grid-cols-[420px_1fr] lg:items-stretch">
             <div className="section-reveal overflow-hidden rounded-3xl border border-[#d6a842]/20 bg-white shadow-[0_24px_70px_rgba(7,27,63,0.14)]">
               <img
-                src="/founder-srinivas-gesala.jpeg"
+                src="/founder-praveen-talluri.jpeg"
                 alt="Srinivas Gesala, Founder and Managing Director"
                 className="h-full min-h-[440px] w-full object-cover object-center"
               />

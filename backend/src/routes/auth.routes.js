@@ -100,7 +100,10 @@ router.post(
       });
     }
 
-    if (!admin.role || admin.role === "admin") {
+    if (admin.isProtected && admin.role !== "ADMIN") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
+      admin.role = "ADMIN";
+    } else if (!admin.role || admin.role === "admin") {
       await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
       admin.role = "ADMIN";
     } else if (admin.role === "user") {
@@ -163,7 +166,10 @@ router.post("/refresh", async (req, res) => {
       return res.status(401).json({ message: "Invalid refresh token" });
     }
 
-    if (!admin.role || admin.role === "admin") {
+    if (admin.isProtected && admin.role !== "ADMIN") {
+      await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
+      admin.role = "ADMIN";
+    } else if (!admin.role || admin.role === "admin") {
       await Admin.findByIdAndUpdate(admin._id, { role: "ADMIN" });
       admin.role = "ADMIN";
     } else if (admin.role === "user") {
