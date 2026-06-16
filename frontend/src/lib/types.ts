@@ -44,7 +44,7 @@ export type AdminUser = {
   username: string;
   name: string;
   email: string;
-  role: "admin" | "user";
+  role: "ADMIN" | "USER";
   isProtected?: boolean;
   lastLogin?: string;
   createdAt?: string;
@@ -97,7 +97,7 @@ export type LoginResponse = {
     name: string;
     username: string;
     email: string;
-    role: "admin" | "user";
+    role: "ADMIN" | "USER";
   };
   expiresIn: number;
 };

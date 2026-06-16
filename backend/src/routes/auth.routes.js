@@ -101,7 +101,7 @@ router.post(
     }
 
     if (!admin.role) {
-      admin.role = "admin";
+      admin.role = "ADMIN";
       await admin.save();
     }
 

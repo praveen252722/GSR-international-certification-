@@ -81,7 +81,7 @@ export default function AdminDashboardPage() {
     { Icon: AlertTriangle, label: "Suspended", value: data?.suspendedCertifications ?? 0, color: "text-orange-600" }
   ];
 
-  const isAdmin = currentRole === "admin";
+  const isAdmin = currentRole === "ADMIN";
 
   return (
     <AdminShell>

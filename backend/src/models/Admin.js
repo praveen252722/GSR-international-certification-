@@ -7,7 +7,7 @@ const adminSchema = new mongoose.Schema(
     username: { type: String, trim: true, lowercase: true, unique: true, sparse: true },
     email: { type: String, trim: true, lowercase: true, unique: true, sparse: true },
     password: { type: String, required: true, select: false },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
+    role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
     isProtected: { type: Boolean, default: false },
     loginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date, default: null },

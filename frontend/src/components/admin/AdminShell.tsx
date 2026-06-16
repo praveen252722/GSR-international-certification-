@@ -24,22 +24,22 @@ type AdminInfo = {
   name: string;
   username: string;
   email: string;
-  role: "admin" | "user";
+  role: "ADMIN" | "USER";
 };
 
 const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
 
 const adminNav = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "user"] },
-  { href: "/admin/certifications", label: "Certifications", icon: Award, roles: ["admin", "user"] },
-  { href: "/admin/organizations", label: "Certified Organizations", icon: Building2, roles: ["admin", "user"] },
-  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox, roles: ["admin", "user"] }
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["ADMIN", "USER"] },
+  { href: "/admin/certifications", label: "Certifications", icon: Award, roles: ["ADMIN", "USER"] },
+  { href: "/admin/organizations", label: "Certified Organizations", icon: Building2, roles: ["ADMIN", "USER"] },
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox, roles: ["ADMIN", "USER"] }
 ];
 
 const adminOnlyNav = [
-  { href: "/admin/users", label: "Users", icon: Users, roles: ["admin"] },
-  { href: "/admin/activity", label: "Activity Logs", icon: Activity, roles: ["admin"] },
-  { href: "/admin/settings", label: "Settings", icon: Settings, roles: ["admin"] }
+  { href: "/admin/users", label: "Users", icon: Users, roles: ["ADMIN"] },
+  { href: "/admin/activity", label: "Activity Logs", icon: Activity, roles: ["ADMIN"] },
+  { href: "/admin/settings", label: "Settings", icon: Settings, roles: ["ADMIN"] }
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -119,7 +119,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     window.location.href = "/admin/login";
   }, []);
 
-  const isAdmin = !admin?.role || admin?.role === "admin";
+  const isAdmin = admin?.role === "ADMIN";
 
   const nav = isAdmin ? [...adminNav, ...adminOnlyNav] : adminNav;
 

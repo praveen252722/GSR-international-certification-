@@ -21,7 +21,7 @@ router.get("/", protect, adminOnly, async (_req, res) => {
 
 router.get("/:id", protect, async (req, res) => {
   const targetId = req.params.id;
-  if (req.admin.role !== "admin" && req.admin._id.toString() !== targetId) {
+  if (req.admin.role !== "ADMIN" && req.admin._id.toString() !== targetId) {
     return res.status(403).json({ message: "You can only view your own profile." });
   }
   const user = await Admin.findById(targetId).select("-password -refreshToken");
@@ -45,7 +45,7 @@ router.post("/", protect, adminOnly, userValidation, validate, async (req, res) 
     password,
     name,
     email: email || `${username}@gsr.local`,
-    role: "user"
+    role: "USER"
   });
 
   const { password: _, refreshToken: __, ...safe } = user.toObject();
@@ -69,20 +69,21 @@ router.put("/:id", protect, async (req, res) => {
 
   if (!target) return res.status(404).json({ message: "User not found" });
 
-  if (target.isProtected && req.admin.role !== "admin") {
-    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+  if (target.isProtected) {
+    if (req.body.role && req.body.role !== "ADMIN") {
+      return res.status(403).json({ message: "Default administrator account is protected and cannot be deleted, disabled, or demoted." });
+    }
+    if (req.admin.role !== "ADMIN") {
+      return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+    }
   }
 
-  if (req.admin.role !== "admin" && req.admin._id.toString() !== targetId) {
+  if (req.admin.role !== "ADMIN" && req.admin._id.toString() !== targetId) {
     return res.status(403).json({ message: "You can only update your own profile." });
   }
 
-  if (req.body.role && req.admin.role !== "admin") {
+  if (req.body.role && req.admin.role !== "ADMIN") {
     return res.status(403).json({ message: "Only admins can change roles." });
-  }
-
-  if (target.isProtected && req.body.role && req.body.role !== "admin") {
-    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
   }
 
   const update = {};
@@ -90,7 +91,7 @@ router.put("/:id", protect, async (req, res) => {
   if (req.body.name) update.name = req.body.name;
   if (req.body.email) update.email = req.body.email;
   if (req.body.password) update.password = req.body.password;
-  if (req.body.role && req.admin.role === "admin") update.role = req.body.role;
+  if (req.body.role && req.admin.role === "ADMIN") update.role = req.body.role;
 
   const user = await Admin.findByIdAndUpdate(targetId, update, { new: true, runValidators: true }).select("-password -refreshToken");
   if (!user) return res.status(404).json({ message: "User not found" });
@@ -114,11 +115,16 @@ router.delete("/:id", protect, adminOnly, async (req, res) => {
   if (!target) return res.status(404).json({ message: "User not found" });
 
   if (target.isProtected) {
-    return res.status(403).json({ message: "Default administrator account is protected and cannot be modified." });
+    return res.status(403).json({ message: "Default administrator account is protected and cannot be deleted, disabled, or demoted." });
   }
 
   if (target._id.toString() === req.admin._id.toString()) {
     return res.status(403).json({ message: "You cannot delete your own account." });
+  }
+
+  const adminCount = await Admin.countDocuments({ role: "ADMIN" });
+  if (adminCount <= 1 && target.role === "ADMIN") {
+    return res.status(403).json({ message: "Cannot delete the last remaining administrator account." });
   }
 
   await Admin.findByIdAndDelete(req.params.id);

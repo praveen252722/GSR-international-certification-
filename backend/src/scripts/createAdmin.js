@@ -21,7 +21,7 @@ async function main() {
   const existing = await Admin.findOne({ $or: lookup });
 
   if (existing) {
-    await Admin.findByIdAndUpdate(existing._id, { isProtected: true, role: "admin" });
+    await Admin.findByIdAndUpdate(existing._id, { isProtected: true, role: "ADMIN" });
     console.log("Admin already exists. Updated as protected administrator.");
     process.exit(0);
   }
@@ -31,7 +31,7 @@ async function main() {
     username: ADMIN_USERNAME,
     email: ADMIN_EMAIL || `${ADMIN_USERNAME}@gsr.local`,
     password: ADMIN_PASSWORD,
-    role: "admin",
+    role: "ADMIN",
     isProtected: true
   });
 

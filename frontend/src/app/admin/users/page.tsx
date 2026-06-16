@@ -11,10 +11,10 @@ type UserForm = {
   username: string;
   password: string;
   name: string;
-  role: "admin" | "user";
+  role: "ADMIN" | "USER";
 };
 
-const emptyForm: UserForm = { username: "", password: "", name: "", role: "user" };
+const emptyForm: UserForm = { username: "", password: "", name: "", role: "USER" };
 
 export default function AdminUsersPage() {
   const [items, setItems] = useState<AdminUser[]>([]);
@@ -25,7 +25,7 @@ export default function AdminUsersPage() {
   const [error, setError] = useState("");
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
 
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin = currentUser?.role === "ADMIN";
 
   useEffect(() => {
     const stored = localStorage.getItem("adminUser");
@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
       const payload: Record<string, string> = { username: form.username, name: form.name };
       if (form.password) payload.password = form.password;
       if (editing && form.role) payload.role = form.role;
-      if (!editing) payload.role = "user";
+      if (!editing) payload.role = "USER";
       await adminApi.saveUser(payload, editing);
       setMessage(editing ? "User updated successfully" : "User created successfully");
       resetForm();
@@ -86,7 +86,7 @@ export default function AdminUsersPage() {
     setMessage("");
     setError("");
     setEditing(item._id);
-    setForm({ username: item.username, password: "", name: item.name, role: item.role || "user" });
+    setForm({ username: item.username, password: "", name: item.name, role: item.role || "USER" });
   }
 
   async function remove(id: string) {
@@ -137,9 +137,9 @@ export default function AdminUsersPage() {
               <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
               <input className="focus-ring rounded border border-ink/10 px-4 py-3" placeholder={editing ? "New Password (leave blank to keep)" : "Password"} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={!editing} />
               {editing && (
-                <select className="focus-ring rounded border border-ink/10 px-4 py-3" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as "admin" | "user" })}>
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                <select className="focus-ring rounded border border-ink/10 px-4 py-3" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as "ADMIN" | "USER" })}>
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
                 </select>
               )}
               <button className="inline-flex items-center justify-center gap-2 rounded bg-copper px-5 py-4 font-semibold text-white">
@@ -172,9 +172,9 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-2">
                           {item.username}
                           {item.isProtected && (
-                            <span className="inline-flex items-center gap-1 rounded bg-[#d6a842]/20 px-2 py-0.5 text-[10px] font-bold text-[#8a641d]">
+                            <span className="inline-flex items-center gap-1 rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
                               <ShieldCheck size={10} />
-                              Protected
+                              PROTECTED ADMINISTRATOR
                             </span>
                           )}
                         </div>
@@ -183,11 +183,11 @@ export default function AdminUsersPage() {
                       <td className="px-3 py-3 text-sm text-graphite/70">{item.email}</td>
                       <td className="px-3 py-3">
                         <span className={`rounded px-2 py-0.5 text-xs font-bold ${
-                          item.role === "admin"
+                          item.role === "ADMIN"
                             ? "bg-[#d6a842]/20 text-[#8a641d]"
                             : "bg-blue-100 text-blue-700"
                         }`}>
-                          {item.role || "user"}
+                          {item.role || "USER"}
                         </span>
                       </td>
                       <td className="px-3 py-3 text-sm text-graphite/70">{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}</td>
@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => edit(item)}
-                            disabled={!isAdmin}
+                            disabled={!isAdmin || (item.isProtected && item.role === "ADMIN" && !isAdmin)}
                             className="grid h-10 w-10 place-items-center rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed"
                             aria-label="Edit"
                           >
