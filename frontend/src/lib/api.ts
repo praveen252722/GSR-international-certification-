@@ -3,6 +3,13 @@ import type { Certification, Inquiry, Organization, Settings, AdminUser, Activit
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 export const ASSET_URL = API_URL.replace(/\/api(\/v1)?\/?$/, "");
 
+if (typeof window !== "undefined") {
+  console.log("[API] Current API base URL:", API_URL);
+  console.log("[API] Login endpoint:", `${API_URL}/auth/login`);
+  console.log("[API] Users endpoint:", `${API_URL}/users`);
+  console.log("[API] Inquiries endpoint:", `${API_URL}/inquiries`);
+}
+
 const REQUEST_TIMEOUT = 15_000;
 
 function debugLog(level: string, ...args: unknown[]) {

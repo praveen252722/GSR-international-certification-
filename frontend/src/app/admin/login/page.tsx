@@ -34,6 +34,7 @@ export default function AdminLoginPage() {
     const password = String(data.get("password"));
 
     try {
+      console.log("[Login] Attempting login with endpoint:", `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/auth/login`);
       const response = await adminApi.login({ username, password, rememberMe });
       localStorage.setItem("adminToken", response.token);
       localStorage.setItem("adminRefreshToken", response.refreshToken);

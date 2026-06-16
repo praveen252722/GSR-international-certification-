@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-official", weight: ["600", "700", "800"] });
 
-const SITE_URL = "https://www.gsrinternationalcertifications.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.gsrinternationalcertifications.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
