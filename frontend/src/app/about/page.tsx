@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Learn about GSR International Certifications ? our mission, vision, and leadership in providing professional ISO certification and compliance services.",
+  description: "Learn about GSR International Certifications — our mission, vision, and leadership in providing professional ISO certification and compliance services.",
   openGraph: { title: "About Us | GSR International Certifications", url: "https://www.gsrinternationalcertifications.com/about" },
   alternates: { canonical: "https://www.gsrinternationalcertifications.com/about" }
 };
@@ -80,7 +80,7 @@ export default function AboutPage() {
               GSR International Certifications is a Hyderabad-based certification services provider dedicated to
               helping organizations achieve internationally recognized ISO standards. Our mission is to simplify
               the certification process through expert guidance, structured documentation support, and transparent
-              audit coordination ? enabling businesses to focus on what matters most: quality, safety, and
+              audit coordination — enabling businesses to focus on what matters most: quality, safety, and
               continuous improvement.
             </p>
             <p>
@@ -102,4 +102,3 @@ export default function AboutPage() {
     </PublicShell>
   );
 }
-
