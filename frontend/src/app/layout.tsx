@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   description: "GSR International Certifications provides professional ISO certification services, compliance support, audit coordination, documentation assistance, and certificate verification services.",
   keywords: ["ISO certification", "ISO 9001", "certification services", "GSR International", "audit coordination", "compliance management", "certificate verification"],
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/icon-192.png", type: "image/png", sizes: "192x192" }],
     shortcut: "/favicon.ico",
-    apple: "/icon-192.png"
+    apple: [{ url: "/icon-192.png", sizes: "192x192" }]
   },
   manifest: "/manifest.json",
   openGraph: {
