@@ -53,7 +53,7 @@ export default function AdminInquiriesPage() {
     URL.revokeObjectURL(url);
   }
 
-  return (
+  return (<>
       <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <h2 className="font-display text-4xl font-semibold">Inquiry Management</h2>
         <button onClick={exportCsv} className="inline-flex items-center gap-2 rounded bg-moss px-5 py-3 font-semibold text-white">
@@ -102,5 +102,5 @@ export default function AdminInquiriesPage() {
           </div>
         )}
       </AdminCard>
-  );
+  </>);
 }

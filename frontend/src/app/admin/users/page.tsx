@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  return (
+  return (<>
       <div className="mb-6">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Administration</p>
         <h2 className="mt-1 font-display text-4xl font-semibold">User Management</h2>
@@ -220,5 +220,5 @@ export default function AdminUsersPage() {
           )}
         </AdminCard>
       </div>
-  );
+  </>);
 }

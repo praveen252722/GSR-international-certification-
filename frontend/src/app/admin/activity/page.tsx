@@ -64,7 +64,7 @@ export default function AdminActivityPage() {
     });
   }
 
-  return (
+  return (<>
       <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Audit Trail</p>
@@ -182,5 +182,5 @@ export default function AdminActivityPage() {
           </>
         )}
       </AdminCard>
-  );
+  </>);
 }

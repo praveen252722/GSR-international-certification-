@@ -135,7 +135,7 @@ export default function AdminOrganizationsPage() {
     }
   }
 
-  return (
+  return (<>
       <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Projects showcase</p>
@@ -254,5 +254,5 @@ export default function AdminOrganizationsPage() {
           )}
         </AdminCard>
       </div>
-  );
+  </>);
 }

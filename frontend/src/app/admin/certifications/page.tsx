@@ -158,7 +158,7 @@ export default function AdminCertificationsPage() {
     URL.revokeObjectURL(url);
   }
 
-  return (
+  return (<>
       <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-moss">Certification programs</p>
@@ -314,5 +314,5 @@ export default function AdminCertificationsPage() {
           )}
         </div>
       </div>
-  );
+  </>);
 }

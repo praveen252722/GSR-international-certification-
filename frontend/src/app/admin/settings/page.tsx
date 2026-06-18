@@ -36,7 +36,7 @@ export default function AdminSettingsPage() {
     setTimeout(() => setSaved(""), 3000);
   }
 
-  return (
+  return (<>
       <h2 className="mb-6 font-display text-4xl font-semibold">Settings</h2>
       <AdminCard className="max-w-4xl">
         <form onSubmit={submit} className="grid gap-4">
@@ -78,5 +78,5 @@ export default function AdminSettingsPage() {
           </div>
         </form>
       </AdminCard>
-  );
+  </>);
 }
