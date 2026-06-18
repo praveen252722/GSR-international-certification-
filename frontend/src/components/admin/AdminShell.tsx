@@ -76,6 +76,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     }
   }, [router]);
 
+
+
   // Inactivity timeout
   useEffect(() => {
     if (!admin) return;
