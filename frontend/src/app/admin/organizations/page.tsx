@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState, useRef } from "react";
 import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
-import { adminApi, asset } from "@/lib/api";
+import { BackendWakingBanner } from "@/components/admin/BackendWakingBanner";
+import { adminApi, asset, isColdStarting } from "@/lib/api";
 import type { Organization } from "@/lib/types";
 
 type FormState = {
@@ -34,6 +35,8 @@ export default function AdminOrganizationsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [waking, setWaking] = useState(false);
+  const startRef = useRef(Date.now());
 
   const filteredItems = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -43,20 +46,30 @@ export default function AdminOrganizationsPage() {
     );
   }, [items, search]);
 
-  async function load() {
+  async function load(autoRetry = false) {
     setLoading(true);
     setError("");
     try {
       setItems(await adminApi.organizations());
+      setWaking(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load organizations");
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("Backend is waking up") || (isColdStarting && Date.now() - startRef.current < 60000)) {
+        setWaking(true);
+        setError("");
+        if (autoRetry) {
+          setTimeout(() => load(false), 10000);
+        }
+        return;
+      }
+      setError(msg || "Unable to load organizations");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    load();
+    load(true);
   }, []);
 
   function resetForm() {
@@ -142,7 +155,8 @@ export default function AdminOrganizationsPage() {
       </div>
 
       {message ? <div className="mb-4 rounded border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">{message}</div> : null}
-      {error ? <div className="mb-4 rounded border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
+      {waking ? <BackendWakingBanner /> : null}
+      {error && !waking ? <div className="mb-4 rounded border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
 
       <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
         <AdminCard>
@@ -177,8 +191,27 @@ export default function AdminOrganizationsPage() {
         </AdminCard>
 
         <AdminCard>
-          {loading ? (
+          {loading && !waking ? (
             <div className="grid min-h-72 place-items-center text-sm font-semibold text-graphite/60">Loading organizations...</div>
+          ) : loading && waking ? (
+            <div className="grid gap-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="animate-pulse rounded-2xl bg-[#f6f9fc] p-3">
+                  <div className="grid gap-4 lg:grid-cols-[180px_minmax(0,1fr)_auto]">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="h-24 w-full rounded-xl bg-gray-200" />
+                      <div className="h-24 w-full rounded-xl bg-gray-200" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-5 w-48 rounded bg-gray-200" />
+                      <div className="h-4 w-full rounded bg-gray-200" />
+                      <div className="h-4 w-3/4 rounded bg-gray-200" />
+                      <div className="h-3 w-32 rounded bg-gray-200" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="grid gap-3">
               {filteredItems.map((item) => (

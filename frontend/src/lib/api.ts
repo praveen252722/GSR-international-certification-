@@ -10,13 +10,33 @@ if (typeof window !== "undefined") {
   console.log("[API] Inquiries endpoint:", `${API_URL}/inquiries`);
 }
 
-const REQUEST_TIMEOUT = 15_000;
+const REQUEST_TIMEOUT = 30_000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2_000;
+const SLOW_THRESHOLD = 8_000;
+
+export let isColdStarting = false;
+export let lastResponseTime = 0;
+export let isBackendWaking = false;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function debugLog(level: string, ...args: unknown[]) {
   if (process.env.NODE_ENV === "development") {
     if (level === "error") console.error("[API]", ...args);
     else console.log("[API]", ...args);
   }
+}
+
+function logResponseTime(method: string, url: string, elapsed: number, attempt: number) {
+  const level = elapsed > 5000 ? "warn" : "info";
+  const label = elapsed > SLOW_THRESHOLD ? "SLOW" : "OK";
+  const msg = `[${label}] ${method} ${url} - ${elapsed}ms (attempt ${attempt})`;
+  if (level === "warn") console.warn("[API]", msg);
+  else debugLog("info", msg);
+  lastResponseTime = elapsed;
 }
 
 let isRefreshing = false;
@@ -74,7 +94,7 @@ function redirectToLogin(message?: string) {
   window.location.href = "/admin/login";
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function executeRequest<T>(path: string, options: RequestInit, attempt: number): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
@@ -85,7 +105,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...(options.headers as Record<string, string>)
   };
 
-  debugLog("info", `${options.method || "GET"} ${url}`);
+  debugLog("info", `[attempt ${attempt}] ${options.method || "GET"} ${url}`);
 
   try {
     const response = await fetch(url, {
@@ -129,18 +149,74 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
     if (!response.ok) return handleError(response);
     return response.json();
-  } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error(`Request timed out (${REQUEST_TIMEOUT / 1000}s) - Backend not responding at ${url}`);
-    }
-    if (err instanceof TypeError && err.message === "Failed to fetch") {
-      const hint = url.includes("localhost") ? "Make sure the backend is running on port 5000." : "Check that the backend service is running.";
-      throw new Error("Backend Offline - Cannot reach the API server at " + url + ". " + hint);
-    }
-    throw err;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const isGet = !options.method || options.method === "GET";
+  const maxAttempts = isGet ? MAX_RETRIES + 1 : 1;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const startTime = Date.now();
+    const url = `${API_URL}${path}`;
+
+    try {
+      const result = await executeRequest<T>(path, options, attempt);
+      const elapsed = Date.now() - startTime;
+
+      logResponseTime(options.method || "GET", path, elapsed, attempt);
+
+      if (elapsed > SLOW_THRESHOLD && isGet) {
+        isColdStarting = true;
+        isBackendWaking = true;
+      } else if (isColdStarting && attempt > 1) {
+        isColdStarting = false;
+        isBackendWaking = false;
+      }
+
+      return result;
+    } catch (err) {
+      const elapsed = Date.now() - startTime;
+
+      const isTimeoutOrNetwork =
+        (err instanceof DOMException && err.name === "AbortError") ||
+        (err instanceof TypeError && err.message === "Failed to fetch");
+
+      if (attempt === 1 && isTimeoutOrNetwork && isGet) {
+        isColdStarting = true;
+        isBackendWaking = true;
+        console.warn("[API] Backend waking (cold start detected), retrying...");
+      }
+
+      if (attempt < maxAttempts && isTimeoutOrNetwork && isGet) {
+        logResponseTime(options.method || "GET", path, elapsed, attempt);
+        await sleep(RETRY_DELAY);
+        continue;
+      }
+
+      if (err instanceof DOMException && err.name === "AbortError") {
+        if (isColdStarting) {
+          throw new Error(
+            "Backend is waking up. Please wait 30-60 seconds..."
+          );
+        }
+        throw new Error(`Request timed out (${REQUEST_TIMEOUT / 1000}s) - Backend not responding at ${url}`);
+      }
+
+      if (err instanceof TypeError && err.message === "Failed to fetch") {
+        const hint = url.includes("localhost")
+          ? "Make sure the backend is running on port 5000."
+          : "Check that the backend service is running.";
+        throw new Error("Backend Offline - Cannot reach the API server at " + url + ". " + hint);
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error("Unexpected error - all retries exhausted");
 }
 
 async function handleError(response: Response): Promise<never> {
