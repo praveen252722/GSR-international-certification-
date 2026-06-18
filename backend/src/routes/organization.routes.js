@@ -8,6 +8,7 @@ import {
   deleteOrganization,
   getOrganization,
   listOrganizations,
+  restoreOrganization,
   updateOrganization
 } from "../controllers/organization.controller.js";
 
@@ -51,5 +52,6 @@ router.put(
 );
 
 router.delete("/:id", protect, deleteOrganization);
+router.patch("/:id/restore", protect, restoreOrganization);
 
 export default router;

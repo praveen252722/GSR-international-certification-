@@ -9,7 +9,8 @@ const organizationSchema = new mongoose.Schema(
     publicId: { type: String, trim: true },
     publicId2: { type: String, trim: true },
     certificationDate: { type: Date, required: true },
-    status: { type: String, enum: ["Certified", "Active"], default: "Certified" }
+    status: { type: String, enum: ["Certified", "Active"], default: "Certified" },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

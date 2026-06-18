@@ -30,14 +30,17 @@ function cleanCertificationPayload(payload) {
 }
 
 router.get("/", async (req, res) => {
-  const filter = req.query.public === "true" ? { status: "Active" } : {};
+  const includeDeleted = req.query.includeDeleted === "true";
+  const statusFilter = req.query.public === "true" ? { status: "Active" } : {};
+  const filter = includeDeleted ? { ...statusFilter } : { ...statusFilter, isDeleted: { $ne: true } };
   const certifications = await Certification.find(filter).sort({ createdAt: -1 });
   res.json(certifications);
 });
 
 router.get("/verify/:certificateId", async (req, res) => {
   const certification = await Certification.findOne({
-    certificateId: String(req.params.certificateId).trim().toUpperCase()
+    certificateId: String(req.params.certificateId).trim().toUpperCase(),
+    isDeleted: { $ne: true }
   });
 
   if (!certification) return res.status(404).json({ message: "Certificate not found" });
@@ -79,8 +82,13 @@ router.put("/:id", protect, certificationValidation, validate, async (req, res) 
 
 router.delete("/:id", protect, async (req, res) => {
   const log = createActivityLogger(req);
-  const certification = await Certification.findByIdAndDelete(req.params.id);
+  const certification = await Certification.findById(req.params.id);
   if (!certification) return res.status(404).json({ message: "Certification not found" });
+  if (certification.isDeleted) return res.status(400).json({ message: "Certification already deleted" });
+
+  certification.isDeleted = true;
+  await certification.save();
+
   await log({
     action: "Certificate Deleted",
     module: "Certifications",
@@ -92,8 +100,28 @@ router.delete("/:id", protect, async (req, res) => {
   res.json({ message: "Certification deleted" });
 });
 
+router.patch("/:id/restore", protect, async (req, res) => {
+  const log = createActivityLogger(req);
+  const certification = await Certification.findById(req.params.id);
+  if (!certification) return res.status(404).json({ message: "Certification not found" });
+  if (!certification.isDeleted) return res.status(400).json({ message: "Certification is not deleted" });
+
+  certification.isDeleted = false;
+  await certification.save();
+
+  await log({
+    action: "Certificate Restored",
+    module: "Certifications",
+    description: `${req.admin.name} restored certificate ${certification.name}`,
+    targetId: certification._id.toString(),
+    targetName: certification.name,
+    success: true
+  });
+  res.json({ message: "Certification restored", certification });
+});
+
 router.get("/export/csv", protect, async (_req, res) => {
-  const certifications = await Certification.find().sort({ createdAt: -1 });
+  const certifications = await Certification.find({ isDeleted: { $ne: true } }).sort({ createdAt: -1 });
   const rows = [
     [
       "Certification Name",

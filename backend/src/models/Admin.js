@@ -13,7 +13,8 @@ const adminSchema = new mongoose.Schema(
     lockUntil: { type: Date, default: null },
     lastLogin: { type: Date, default: null },
     lastActivity: { type: Date, default: null },
-    refreshToken: { type: String, select: false }
+    refreshToken: { type: String, select: false },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

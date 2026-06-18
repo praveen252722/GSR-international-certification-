@@ -10,14 +10,37 @@ if (typeof window !== "undefined") {
   console.log("[API] Inquiries endpoint:", `${API_URL}/inquiries`);
 }
 
-const REQUEST_TIMEOUT = 30_000;
+const REQUEST_TIMEOUT = 60_000;
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2_000;
-const SLOW_THRESHOLD = 8_000;
+const SLOW_THRESHOLD = 10_000;
+const CACHE_TTL = 5 * 60 * 1000;
 
 export let isColdStarting = false;
 export let lastResponseTime = 0;
 export let isBackendWaking = false;
+
+const cache = new Map<string, { data: unknown; ts: number }>();
+
+export function clearDashboardCache() {
+  cache.delete("/dashboard");
+  cache.delete("/certifications");
+  cache.delete("/organizations");
+  cache.delete("/users");
+  cache.delete("/inquiries");
+  cache.delete("/settings");
+}
+
+function cacheGet<T>(key: string): T | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.ts > CACHE_TTL) { cache.delete(key); return null; }
+  return entry.data as T;
+}
+
+function cacheSet(key: string, data: unknown) {
+  cache.set(key, { data, ts: Date.now() });
+}
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -31,11 +54,9 @@ function debugLog(level: string, ...args: unknown[]) {
 }
 
 function logResponseTime(method: string, url: string, elapsed: number, attempt: number) {
-  const level = elapsed > 5000 ? "warn" : "info";
   const label = elapsed > SLOW_THRESHOLD ? "SLOW" : "OK";
   const msg = `[${label}] ${method} ${url} - ${elapsed}ms (attempt ${attempt})`;
-  if (level === "warn") console.warn("[API]", msg);
-  else debugLog("info", msg);
+  console.log("[API]", msg);
   lastResponseTime = elapsed;
 }
 
@@ -158,6 +179,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const isGet = !options.method || options.method === "GET";
   const maxAttempts = isGet ? MAX_RETRIES + 1 : 1;
 
+  const cached = isGet ? cacheGet<T>(path) : null;
+  if (cached) return cached;
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const startTime = Date.now();
     const url = `${API_URL}${path}`;
@@ -167,6 +191,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       const elapsed = Date.now() - startTime;
 
       logResponseTime(options.method || "GET", path, elapsed, attempt);
+
+      if (isGet) cacheSet(path, result);
 
       if (elapsed > SLOW_THRESHOLD && isGet) {
         isColdStarting = true;
@@ -192,6 +218,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
       if (attempt < maxAttempts && isTimeoutOrNetwork && isGet) {
         logResponseTime(options.method || "GET", path, elapsed, attempt);
+        console.log("[API] Retrying in 2s...");
         await sleep(RETRY_DELAY);
         continue;
       }
@@ -199,7 +226,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       if (err instanceof DOMException && err.name === "AbortError") {
         if (isColdStarting) {
           throw new Error(
-            "Backend is waking up. Please wait 30-60 seconds..."
+            "Backend server is waking up. This may take up to 60 seconds."
           );
         }
         throw new Error(`Request timed out (${REQUEST_TIMEOUT / 1000}s) - Backend not responding at ${url}`);
@@ -314,7 +341,8 @@ export const adminApi = {
     }
   },
 
-  certifications: () => request<Certification[]>("/certifications", { headers: authHeaders() }),
+  certifications: (includeDeleted?: boolean) =>
+    request<Certification[]>(`/certifications${includeDeleted ? "?includeDeleted=true" : ""}`, { headers: authHeaders() }),
   saveCertification: (payload: Partial<Certification>, id?: string) =>
     request<Certification>(id ? `/certifications/${id}` : "/certifications", {
       method: id ? "PUT" : "POST",
@@ -323,8 +351,11 @@ export const adminApi = {
     }),
   deleteCertification: (id: string) =>
     request<{ message: string }>(`/certifications/${id}`, { method: "DELETE", headers: authHeaders() }),
+  restoreCertification: (id: string) =>
+    request<{ message: string }>(`/certifications/${id}/restore`, { method: "PATCH", headers: authHeaders() }),
 
-  organizations: () => request<Organization[]>("/organizations", { headers: authHeaders() }),
+  organizations: (includeDeleted?: boolean) =>
+    request<Organization[]>(`/organizations${includeDeleted ? "?includeDeleted=true" : ""}`, { headers: authHeaders() }),
   saveOrganization: (payload: FormData, id?: string) =>
     request<Organization>(id ? `/organizations/${id}` : "/organizations", {
       method: id ? "PUT" : "POST",
@@ -333,8 +364,11 @@ export const adminApi = {
     }),
   deleteOrganization: (id: string) =>
     request<{ message: string }>(`/organizations/${id}`, { method: "DELETE", headers: authHeaders() }),
+  restoreOrganization: (id: string) =>
+    request<{ message: string }>(`/organizations/${id}/restore`, { method: "PATCH", headers: authHeaders() }),
 
-  inquiries: () => request<Inquiry[]>("/inquiries", { headers: authHeaders() }),
+  inquiries: (includeDeleted?: boolean) =>
+    request<Inquiry[]>(`/inquiries${includeDeleted ? "?includeDeleted=true" : ""}`, { headers: authHeaders() }),
   updateInquiryStatus: (id: string, status: Inquiry["status"]) =>
     request<Inquiry>(`/inquiries/${id}/status`, {
       method: "PATCH",
@@ -343,6 +377,8 @@ export const adminApi = {
     }),
   deleteInquiry: (id: string) =>
     request<{ message: string }>(`/inquiries/${id}`, { method: "DELETE", headers: authHeaders() }),
+  restoreInquiry: (id: string) =>
+    request<{ message: string }>(`/inquiries/${id}/restore`, { method: "PATCH", headers: authHeaders() }),
 
   settings: () => request<Settings>("/settings", { headers: authHeaders() }),
   saveSettings: (payload: Settings) =>
@@ -352,7 +388,8 @@ export const adminApi = {
       body: JSON.stringify(payload)
     }),
 
-  users: () => request<AdminUser[]>("/users", { headers: authHeaders() }),
+  users: (includeDeleted?: boolean) =>
+    request<AdminUser[]>(`/users${includeDeleted ? "?includeDeleted=true" : ""}`, { headers: authHeaders() }),
   getUser: (id: string) =>
     request<AdminUser>(`/users/${id}`, { headers: authHeaders() }),
   saveUser: (payload: Partial<AdminUser> & { password?: string }, id?: string) =>
@@ -363,6 +400,8 @@ export const adminApi = {
     }),
   deleteUser: (id: string) =>
     request<{ message: string }>(`/users/${id}`, { method: "DELETE", headers: authHeaders() }),
+  restoreUser: (id: string) =>
+    request<{ message: string }>(`/users/${id}/restore`, { method: "PATCH", headers: authHeaders() }),
 
   activityLogs: (params?: {
     search?: string;

@@ -14,8 +14,10 @@ const userValidation = [
   body("name").trim().isLength({ min: 2 }).withMessage("Name is required")
 ];
 
-router.get("/", protect, adminOnly, async (_req, res) => {
-  const users = await Admin.find().select("-password -refreshToken");
+router.get("/", protect, adminOnly, async (req, res) => {
+  const includeDeleted = req.query.includeDeleted === "true";
+  const filter = includeDeleted ? {} : { isDeleted: { $ne: true } };
+  const users = await Admin.find(filter).select("-password -refreshToken");
   res.json(users);
 });
 
@@ -25,7 +27,7 @@ router.get("/:id", protect, async (req, res) => {
     return res.status(403).json({ message: "You can only view your own profile." });
   }
   const user = await Admin.findById(targetId).select("-password -refreshToken");
-  if (!user) return res.status(404).json({ message: "User not found" });
+  if (!user || user.isDeleted) return res.status(404).json({ message: "User not found" });
   res.json(user);
 });
 
@@ -127,7 +129,8 @@ router.delete("/:id", protect, adminOnly, async (req, res) => {
     return res.status(403).json({ message: "Cannot delete the last remaining administrator account." });
   }
 
-  await Admin.findByIdAndDelete(req.params.id);
+  target.isDeleted = true;
+  await target.save();
 
   await log({
     action: "User Deleted",
@@ -139,6 +142,27 @@ router.delete("/:id", protect, adminOnly, async (req, res) => {
   });
 
   res.json({ message: "User deleted successfully" });
+});
+
+router.patch("/:id/restore", protect, adminOnly, async (req, res) => {
+  const log = createActivityLogger(req);
+  const target = await Admin.findById(req.params.id);
+  if (!target) return res.status(404).json({ message: "User not found" });
+  if (!target.isDeleted) return res.status(400).json({ message: "User is not deleted" });
+
+  target.isDeleted = false;
+  await target.save();
+
+  await log({
+    action: "User Restored",
+    module: "User Management",
+    description: `${req.admin.name} restored user ${target.name}`,
+    targetId: target._id.toString(),
+    targetName: target.name,
+    success: true
+  });
+
+  res.json({ message: "User restored", user: target });
 });
 
 export default router;

@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useMemo, useState, useRef } from "react";
 import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { BackendWakingBanner } from "@/components/admin/BackendWakingBanner";
 import { adminApi, asset, isColdStarting } from "@/lib/api";
@@ -137,7 +136,6 @@ export default function AdminOrganizationsPage() {
   }
 
   return (
-    <AdminShell>
       <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Projects showcase</p>
@@ -256,6 +254,5 @@ export default function AdminOrganizationsPage() {
           )}
         </AdminCard>
       </div>
-    </AdminShell>
   );
 }

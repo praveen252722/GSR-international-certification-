@@ -11,7 +11,9 @@ function removeFromCloudinary(publicId) {
 
 export async function listOrganizations(req, res) {
   try {
-    const filter = req.query.public === "true" ? { status: { $in: ["Certified", "Active"] } } : {};
+    const includeDeleted = req.query.includeDeleted === "true";
+    const baseFilter = req.query.public === "true" ? { status: { $in: ["Certified", "Active"] } } : {};
+    const filter = includeDeleted ? { ...baseFilter } : { ...baseFilter, isDeleted: { $ne: true } };
     const organizations = await Organization.find(filter).sort({ certificationDate: -1, createdAt: -1 });
     res.json(organizations);
   } catch (err) {
@@ -23,7 +25,7 @@ export async function listOrganizations(req, res) {
 export async function getOrganization(req, res) {
   try {
     const organization = await Organization.findById(req.params.id);
-    if (!organization) return res.status(404).json({ message: "Organization not found" });
+    if (!organization || organization.isDeleted) return res.status(404).json({ message: "Organization not found" });
     res.json(organization);
   } catch (err) {
     console.error("getOrganization error:", err.message);
@@ -124,16 +126,17 @@ export async function updateOrganization(req, res) {
 export async function deleteOrganization(req, res) {
   try {
     const log = createActivityLogger(req);
-    const organization = await Organization.findByIdAndDelete(req.params.id);
+    const organization = await Organization.findById(req.params.id);
     if (!organization) return res.status(404).json({ message: "Organization not found" });
+    if (organization.isDeleted) return res.status(400).json({ message: "Organization already deleted" });
 
-    removeFromCloudinary(organization.publicId);
-    removeFromCloudinary(organization.publicId2);
+    organization.isDeleted = true;
+    await organization.save();
 
     await log({
       action: "Organization Deleted",
       module: "Organizations",
-      description: `${req.admin.name} deleted organization ${organization.title}`,
+      description: `${req.admin.name} soft-deleted organization ${organization.title}`,
       targetId: organization._id.toString(),
       targetName: organization.title,
       success: true
@@ -143,5 +146,31 @@ export async function deleteOrganization(req, res) {
   } catch (err) {
     console.error("deleteOrganization error:", err.message);
     res.status(500).json({ message: "Failed to delete organization" });
+  }
+}
+
+export async function restoreOrganization(req, res) {
+  try {
+    const log = createActivityLogger(req);
+    const organization = await Organization.findById(req.params.id);
+    if (!organization) return res.status(404).json({ message: "Organization not found" });
+    if (!organization.isDeleted) return res.status(400).json({ message: "Organization is not deleted" });
+
+    organization.isDeleted = false;
+    await organization.save();
+
+    await log({
+      action: "Organization Restored",
+      module: "Organizations",
+      description: `${req.admin.name} restored organization ${organization.title}`,
+      targetId: organization._id.toString(),
+      targetName: organization.title,
+      success: true
+    });
+
+    res.json({ message: "Organization restored", organization });
+  } catch (err) {
+    console.error("restoreOrganization error:", err.message);
+    res.status(500).json({ message: "Failed to restore organization" });
   }
 }

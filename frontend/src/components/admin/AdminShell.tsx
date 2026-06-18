@@ -141,7 +141,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <aside
         className={clsx(
-          "brand-surface fixed inset-y-0 left-0 z-50 flex w-72 max-w-[86vw] flex-col p-5 text-white shadow-xl transition-transform duration-200 lg:hidden",
+          "brand-surface fixed inset-y-0 left-0 z-50 flex w-60 max-w-[86vw] flex-col p-5 text-white shadow-xl transition-transform duration-200 lg:hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -193,7 +193,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </nav>
       </aside>
 
-      <aside className="brand-surface hidden w-64 shrink-0 flex-col p-4 text-white shadow-xl lg:flex">
+      <aside className="brand-surface hidden w-60 shrink-0 flex-col p-4 text-white shadow-xl lg:flex">
         <Link href="/admin" className="flex items-center gap-3">
           <span className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-white shadow-md">
             <img src="/gsr-logo.png" alt="GSR logo" className="h-12 w-12 object-contain" />
@@ -239,33 +239,33 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="brand-surface shadow-md">
-          <div className="flex min-h-16 items-center justify-between gap-3 px-4 md:px-6">
+          <div className="flex min-h-14 items-center justify-between gap-3 px-4 md:px-6">
             <div className="flex items-center gap-4">
               <button onClick={() => setSidebarOpen(true)} className="p-2 text-white hover:text-white/80 lg:hidden" aria-label="Open menu">
-                <Menu size={22} />
+                <Menu size={20} />
               </button>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">Admin panel</p>
-                <h1 className="font-sans text-xl font-extrabold text-white">Certification Operations</h1>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75">Admin panel</p>
+                <h1 className="font-sans text-lg font-extrabold text-white">Certification Operations</h1>
               </div>
             </div>
             <div className="flex items-center gap-3">
               {admin && (
                 <span className={clsx(
-                  "hidden rounded px-2.5 py-1 text-xs font-bold uppercase tracking-wider md:inline-block",
+                  "hidden rounded px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider md:inline-block",
                   isAdmin ? "bg-[#d6a842] text-[#071b3f]" : "bg-white/20 text-white"
                 )}>
                   {admin.role}
                 </span>
               )}
-              <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/25">
-                <LogOut size={16} /> Logout
+              <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-2 text-sm font-bold text-white backdrop-blur transition hover:bg-white/25">
+                <LogOut size={14} /> Logout
               </button>
             </div>
           </div>
-          <nav className="flex gap-2 overflow-x-auto px-4 pb-4 lg:hidden">
+          <nav className="flex gap-2 overflow-x-auto px-4 pb-3 lg:hidden">
             {nav.map((item) => (
-              <Link key={item.href} href={item.href} className="shrink-0 rounded-lg bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+              <Link key={item.href} href={item.href} className="shrink-0 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-bold text-white backdrop-blur">
                 {item.label}
               </Link>
             ))}

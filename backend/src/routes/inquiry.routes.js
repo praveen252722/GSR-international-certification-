@@ -20,13 +20,15 @@ router.post("/", inquiryValidation, validate, async (req, res) => {
   res.status(201).json({ message: "Inquiry submitted successfully", inquiry });
 });
 
-router.get("/", protect, async (_req, res) => {
-  const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+router.get("/", protect, async (req, res) => {
+  const includeDeleted = req.query.includeDeleted === "true";
+  const filter = includeDeleted ? {} : { isDeleted: { $ne: true } };
+  const inquiries = await Inquiry.find(filter).sort({ createdAt: -1 });
   res.json(inquiries);
 });
 
 router.get("/export/csv", protect, async (_req, res) => {
-  const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+  const inquiries = await Inquiry.find({ isDeleted: { $ne: true } }).sort({ createdAt: -1 });
   const rows = [
     ["Name", "Email", "Phone", "Company", "Service", "Message", "Source", "Status", "Created At"],
     ...inquiries.map((item) => [
@@ -81,8 +83,12 @@ router.patch(
 
 router.delete("/:id", protect, async (req, res) => {
   const log = createActivityLogger(req);
-  const inquiry = await Inquiry.findByIdAndDelete(req.params.id);
+  const inquiry = await Inquiry.findById(req.params.id);
   if (!inquiry) return res.status(404).json({ message: "Inquiry not found" });
+  if (inquiry.isDeleted) return res.status(400).json({ message: "Inquiry already deleted" });
+
+  inquiry.isDeleted = true;
+  await inquiry.save();
 
   await log({
     action: "Inquiry Deleted",
@@ -94,6 +100,27 @@ router.delete("/:id", protect, async (req, res) => {
   });
 
   res.json({ message: "Inquiry deleted" });
+});
+
+router.patch("/:id/restore", protect, async (req, res) => {
+  const log = createActivityLogger(req);
+  const inquiry = await Inquiry.findById(req.params.id);
+  if (!inquiry) return res.status(404).json({ message: "Inquiry not found" });
+  if (!inquiry.isDeleted) return res.status(400).json({ message: "Inquiry is not deleted" });
+
+  inquiry.isDeleted = false;
+  await inquiry.save();
+
+  await log({
+    action: "Inquiry Restored",
+    module: "Inquiries",
+    description: `${req.admin.name} restored inquiry from ${inquiry.name}`,
+    targetId: inquiry._id.toString(),
+    targetName: inquiry.name,
+    success: true
+  });
+
+  res.json({ message: "Inquiry restored", inquiry });
 });
 
 export default router;

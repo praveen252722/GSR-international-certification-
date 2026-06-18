@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Pencil, Plus, ShieldCheck, Trash2, X } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { adminApi } from "@/lib/api";
 import type { AdminUser } from "@/lib/types";
@@ -107,7 +106,6 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <AdminShell>
       <div className="mb-6">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Administration</p>
         <h2 className="mt-1 font-display text-4xl font-semibold">User Management</h2>
@@ -222,6 +220,5 @@ export default function AdminUsersPage() {
           )}
         </AdminCard>
       </div>
-    </AdminShell>
   );
 }

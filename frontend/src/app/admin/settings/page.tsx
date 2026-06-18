@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Save } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
+
 import { AdminCard } from "@/components/admin/AdminCard";
 import { adminApi } from "@/lib/api";
 import type { Settings } from "@/lib/types";
@@ -37,7 +37,6 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <AdminShell>
       <h2 className="mb-6 font-display text-4xl font-semibold">Settings</h2>
       <AdminCard className="max-w-4xl">
         <form onSubmit={submit} className="grid gap-4">
@@ -79,6 +78,5 @@ export default function AdminSettingsPage() {
           </div>
         </form>
       </AdminCard>
-    </AdminShell>
   );
 }

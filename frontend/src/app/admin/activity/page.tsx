@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Download, Filter, Search } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
+
 import { AdminCard } from "@/components/admin/AdminCard";
 import { adminApi } from "@/lib/api";
 import type { ActivityLog } from "@/lib/types";
@@ -65,7 +65,6 @@ export default function AdminActivityPage() {
   }
 
   return (
-    <AdminShell>
       <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-copper">Audit Trail</p>
@@ -183,6 +182,5 @@ export default function AdminActivityPage() {
           </>
         )}
       </AdminCard>
-    </AdminShell>
   );
 }

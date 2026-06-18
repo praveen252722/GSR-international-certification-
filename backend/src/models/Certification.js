@@ -12,7 +12,8 @@ const certificationSchema = new mongoose.Schema(
     scope: { type: String, trim: true, default: "" },
     publishDate: { type: Date },
     expiryDate: { type: Date },
-    certificateState: { type: String, enum: ["Active", "Expired", "Suspended"], default: "Active" }
+    certificateState: { type: String, enum: ["Active", "Expired", "Suspended"], default: "Active" },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

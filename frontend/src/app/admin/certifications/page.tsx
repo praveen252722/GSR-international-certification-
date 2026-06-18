@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Building2, Calendar, Download, Pencil, Plus, Search, ShieldCheck, Trash2, X } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { API_URL, adminApi, authHeaders } from "@/lib/api";
 import type { Certification } from "@/lib/types";
@@ -160,7 +159,6 @@ export default function AdminCertificationsPage() {
   }
 
   return (
-    <AdminShell>
       <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-moss">Certification programs</p>
@@ -316,6 +314,5 @@ export default function AdminCertificationsPage() {
           )}
         </div>
       </div>
-    </AdminShell>
   );
 }
